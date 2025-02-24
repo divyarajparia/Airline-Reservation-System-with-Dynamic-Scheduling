@@ -15,7 +15,6 @@ load_dotenv()
 
 app = Flask(__name__)
 basedir = os.path.abspath(os.path.dirname(__file__))
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://sql12764206:HPNY485L73@sql12.freesqldatabase.com/sql12764206'
 app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql://{os.getenv('db_user_name')}:{os.getenv('db_pwd')}@{os.getenv('db_host')}/{os.getenv('db_name')}"
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 db = SQLAlchemy(app)
