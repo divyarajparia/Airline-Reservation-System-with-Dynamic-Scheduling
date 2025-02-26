@@ -103,5 +103,11 @@ def register():
 
     return render_template('register.html', form=form)
 
+@app.route('/previous_bookings')
+@login_required
+def previous_bookings():
+    # Logic to fetch and display previous bookings goes here
+    return render_template('previous_bookings.html')
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8000)
