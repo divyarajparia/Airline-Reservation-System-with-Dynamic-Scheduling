@@ -3,12 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard_styles.css') }}">
     <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard_styles.css') }}">
 </head>
 <body>
+    <header>
+        <div class="logo">Dashboard</div>
+        <div class="nav-buttons">
+            <button onclick="window.location.href='{{ url_for('logout') }}'">Logout</button>
+            <button onclick="window.location.href='{{ url_for('previous_bookings') }}'">See Previous Bookings</button>
+        </div>
+    </header>
     <h1>Hello, you are logged in</h1>
-    <button onclick="window.location.href='{{ url_for('logout') }}'">Logout</button>
-    <button onclick="window.location.href='{{ url_for('previous_bookings') }}'">See Previous Bookings</button>
+    <div class="form-container">
+        <form method="POST" action="{{ url_for('dashboard') }}">
+            <div class="input-box">
+                <input type="text" name="input1" placeholder="Search Flight Number" required>
+            </div>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    {% if results %}
+    <div class="results">
+        <h2>Results:</h2>
+        <div class="result-box">
+            {% for result in results %}
+            <div class="result-item">
+                <p><strong>Flight Number:</strong> {{ result[0] }}</p>
+                <p><strong>Airline:</strong> {{ result[1] }}</p>
+                <p><strong>Aircraft:</strong> {{ result[2] }}</p>
+                <p><strong>From:</strong> {{ result[3] }}</p>
+                <p><strong>To:</strong> {{ result[4] }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 </body>
 </html>

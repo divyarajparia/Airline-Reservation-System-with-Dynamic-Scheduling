@@ -5,15 +5,64 @@ body {
     padding: 0;
 }
 
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007BFF;
+    padding: 10px 20px;
+    color: white;
+}
+
+header .logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+header .nav-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+header .nav-buttons button {
+    background-color: white;
+    color: #007BFF;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+header .nav-buttons button:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
 h1 {
     text-align: center;
     margin-top: 50px;
 }
 
-.top-right-buttons {
-    position: absolute;
-    top: 20px;
-    right: 20px;
+.form-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.input-box {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 button {
@@ -21,7 +70,6 @@ button {
     color: white;
     border: none;
     padding: 10px 20px;
-    margin: 5px;
     cursor: pointer;
     border-radius: 5px;
     font-size: 16px;
@@ -29,4 +77,32 @@ button {
 
 button:hover {
     background-color: #0056b3;
+}
+
+.results {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.result-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.result-item {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    width: calc(50% - 20px);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.result-item p {
+    margin: 10px 0;
 }

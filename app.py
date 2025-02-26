@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect
+from flask import Flask, render_template, url_for, redirect, request
 from flask_sqlalchemy import SQLAlchemy 
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 import os
@@ -7,6 +7,7 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
+from sqlalchemy import text
 
 import pymysql
 pymysql.install_as_MySQLdb()
@@ -69,7 +70,11 @@ def home():
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required
 def dashboard():
-    return render_template('dashboard.html')
+    if request.method == 'POST':
+        input1 = request.form['input1']
+        query = text("SELECT * FROM Flight_data WHERE Flight_num = :input1")
+        results = db.session.execute(query, {'input1': input1}).fetchall()
+    return render_template('dashboard.html', results=results)
 
 @app.route('/login', methods=['GET','POST'])
 def login():
