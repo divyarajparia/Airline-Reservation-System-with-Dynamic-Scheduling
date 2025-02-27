@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect, request
+from flask import Flask, render_template, url_for, redirect, request, session
 from flask_sqlalchemy import SQLAlchemy 
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 import os
@@ -71,10 +71,36 @@ def home():
 @login_required
 def dashboard():
     if request.method == 'POST':
-        input1 = request.form['input1']
-        query = text("SELECT * FROM Flight_data WHERE Flight_num = :input1")
-        results = db.session.execute(query, {'input1': input1}).fetchall()
-    return render_template('dashboard.html', results=results)
+        source_city = request.form.get('source_city')
+        destination_city = request.form.get('destination_city')
+        travel_date = request.form.get('travel_date')
+        num_passengers = int(request.form.get('num_passengers'))
+        max_layovers = int(request.form.get('max_layovers'))
+
+        source_query = text("SELECT IATA_code, airport_name FROM Airports WHERE city_name = :city")
+        src_airport = db.session.execute(source_query, {'city': source_city}).fetchone()
+        dst_airport = db.session.execute(source_query, {'city': destination_city}).fetchone()
+        src_IATA = src_airport[0]
+        dst_IATA = dst_airport[0]
+        print(src_IATA, dst_IATA)
+
+        session['src_IATA'] = src_IATA
+        session['dst_IATA'] = dst_IATA
+        session['travel_date'] = travel_date
+        session['num_passengers'] = num_passengers
+        session['max_layovers'] = max_layovers
+
+        print(session['src_IATA'], session['dst_IATA'], session['travel_date'], session['num_passengers'], session['max_layovers'])
+
+    city_query = text("SELECT DISTINCT city_name FROM Airports")
+    results = db.session.execute(city_query).fetchall()
+    cities = [row[0] for row in results]
+
+    return render_template('dashboard.html', cities=cities)
+
+
+    
+    
 
 @app.route('/login', methods=['GET','POST'])
 def login():

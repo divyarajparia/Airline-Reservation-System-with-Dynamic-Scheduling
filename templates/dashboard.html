@@ -1,11 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard_styles.css') }}">
+    <style>
+        /* Ensure the dropdown aligns with the input box */
+        .dropdown {
+            position: absolute;
+            width: 100%; /* Match input width */
+            max-height: 150px; /* Limit visible options (5 items ~30px each) */
+            overflow-y: auto; /* Scroll if too many options */
+            border: 1px solid #ccc;
+            border-top: none;
+            display: none; /* Hide by default */
+            z-index: 1000; /* Ensure it appears above other content */
+            background-color: white;
+        }
+
+        .dropdown option {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .dropdown option:hover {
+            background-color: #f0f0f0; /* Highlight on hover */
+        }
+
+        .input-container {
+            position: relative; /* Ensure dropdown positions correctly */
+            width: 300px; /* Fixed width for the input and dropdown */
+        }
+    </style>
 </head>
+
 <body>
     <header>
         <div class="logo">Dashboard</div>
@@ -14,30 +43,93 @@
             <button onclick="window.location.href='{{ url_for('previous_bookings') }}'">See Previous Bookings</button>
         </div>
     </header>
+
     <h1>Hello, you are logged in</h1>
+
     <div class="form-container">
         <form method="POST" action="{{ url_for('dashboard') }}">
-            <div class="input-box">
-                <input type="text" name="input1" placeholder="Search Flight Number" required>
+
+            <!-- Source City Dropdown with Search -->
+            <div class="input-container">
+                <label for="source_city">From:</label>
+                <input type="text" id="source_city" name="source_city" placeholder="Enter Source City" onkeyup="filterDropdown('source_city', 'source_dropdown')" autocomplete="off" required>
+                <select id="source_dropdown" class="dropdown" size="5" onchange="selectCity('source_city', this)">
+                    {% for city in cities %}
+                    <option value="{{ city }}">{{ city }}</option>
+                    {% endfor %}
+                </select>
             </div>
-            <button type="submit">Submit</button>
+
+            <!-- Destination City Dropdown with Search -->
+            <div class="input-container">
+                <label for="destination_city">To:</label>
+                <input type="text" id="destination_city" name="destination_city" placeholder="Enter Destination City" onkeyup="filterDropdown('destination_city', 'destination_dropdown')" autocomplete="off" required>
+                <select id="destination_dropdown" class="dropdown" size="5" onchange="selectCity('destination_city', this)">
+                    {% for city in cities %}
+                    <option value="{{ city }}">{{ city }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Date Input -->
+            <div class="input-box">
+                <label for="travel_date">Travel Date:</label>
+                <input type="date" id="travel_date" name="travel_date" required>
+            </div>
+
+            <div class="input-box">
+                <label for="num_passengers">Number of Passengers:</label>
+                <input type="number" id="num_passengers" name="num_passengers" min="1" max="10" value="1" required>
+            </div>
+
+            <!-- Max Layovers -->
+            <div class="input-box">
+                <label for="max_layovers">Max Layovers:</label>
+                <input type="number" id="max_layovers" name="max_layovers" min="0" max="5" value="0" required>
+            </div>
+
+            <button type="submit">Search Flights</button>
+
         </form>
     </div>
-    {% if results %}
-    <div class="results">
-        <h2>Results:</h2>
-        <div class="result-box">
-            {% for result in results %}
-            <div class="result-item">
-                <p><strong>Flight Number:</strong> {{ result[0] }}</p>
-                <p><strong>Airline:</strong> {{ result[1] }}</p>
-                <p><strong>Aircraft:</strong> {{ result[2] }}</p>
-                <p><strong>From:</strong> {{ result[3] }}</p>
-                <p><strong>To:</strong> {{ result[4] }}</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
+
+    <!-- JavaScript: Dynamic Dropdown Filtering -->
+    <script>
+        // Filters dropdown options as user types (case-insensitive)
+        function filterDropdown(inputId, dropdownId) {
+            const input = document.getElementById(inputId).value.toLowerCase();
+            const dropdown = document.getElementById(dropdownId);
+            const options = dropdown.getElementsByTagName('option');
+            let matchCount = 0;
+
+            for (let option of options) {
+                if (option.value.toLowerCase().includes(input)) {
+                    option.style.display = "block";
+                    matchCount++;
+                } else {
+                    option.style.display = "none";
+                }
+            }
+
+            // Show dropdown if matches found, else hide
+            dropdown.style.display = matchCount > 0 ? "block" : "none";
+        }
+
+        // Selects the city from the dropdown and updates the input field
+        function selectCity(inputId, dropdown) {
+            document.getElementById(inputId).value = dropdown.value;
+            dropdown.style.display = "none";
+        }
+
+        // Hide dropdown if clicked outside
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.input-container')) {
+                document.getElementById('source_dropdown').style.display = 'none';
+                document.getElementById('destination_dropdown').style.display = 'none';
+            }
+        });
+    </script>
+
 </body>
+
 </html>
