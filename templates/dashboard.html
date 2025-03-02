@@ -5,34 +5,6 @@
     <meta charset="UTF-8">
     <title>Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard_styles.css') }}">
-    <style>
-        /* Ensure the dropdown aligns with the input box */
-        .dropdown {
-            position: absolute;
-            width: 100%; /* Match input width */
-            max-height: 150px; /* Limit visible options (5 items ~30px each) */
-            overflow-y: auto; /* Scroll if too many options */
-            border: 1px solid #ccc;
-            border-top: none;
-            display: none; /* Hide by default */
-            z-index: 1000; /* Ensure it appears above other content */
-            background-color: white;
-        }
-
-        .dropdown option {
-            padding: 8px;
-            cursor: pointer;
-        }
-
-        .dropdown option:hover {
-            background-color: #f0f0f0; /* Highlight on hover */
-        }
-
-        .input-container {
-            position: relative; /* Ensure dropdown positions correctly */
-            width: 300px; /* Fixed width for the input and dropdown */
-        }
-    </style>
 </head>
 
 <body>
@@ -92,6 +64,21 @@
 
         </form>
     </div>
+
+    {% if flights %}
+    <h2>Available Flights</h2>
+    <div class="flights-container">
+        {% for flight in flights %}
+        <div class="flight-box">
+            <p><strong>Flight Number:</strong> {{ flight.flight_num }}</p>
+            <p><strong>From:</strong> {{ flight.src_airport }}</p>
+            <p><strong>To:</strong> {{ flight.dst_airport }}</p>
+            <p><strong>Departure Time:</strong> {{ flight.dept_time }}</p>
+            <p><strong>Arrival Time:</strong> {{ flight.arrival_time }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
     <!-- JavaScript: Dynamic Dropdown Filtering -->
     <script>

@@ -67,9 +67,70 @@ class LoginForm(FlaskForm):
 def home():
     return render_template('home.html')
 
+# @app.route('/dashboard', methods=['GET', 'POST'])
+# @login_required
+# def dashboard():
+#     flights = None
+#     selected_flight = None
+
+#     if request.method == 'POST':
+#         if 'search_flights' in request.form:  # Triggered on Flight Search
+#             source_city = request.form.get('source_city')
+#             destination_city = request.form.get('destination_city')
+#             travel_date = request.form.get('travel_date')
+#             num_passengers = int(request.form.get('num_passengers'))
+#             max_layovers = int(request.form.get('max_layovers'))
+
+
+#             # Fetch IATA Codes
+#             source_query = text("SELECT IATA_code FROM Airports WHERE city_name = :city")
+#             src_airport = db.session.execute(source_query, {'city': source_city}).fetchone()
+#             dst_airport = db.session.execute(source_query, {'city': destination_city}).fetchone()
+#             src_IATA = src_airport[0]
+#             dst_IATA = dst_airport[0]
+#             print(src_IATA, dst_IATA)
+
+#             if src_airport and dst_airport:
+#                 src_IATA, dst_IATA = src_airport[0], dst_airport[0]
+
+#                 # Store Search Parameters
+#                 session.update({
+#                     'src_IATA': src_IATA,
+#                     'dst_IATA': dst_IATA,
+#                     'travel_date': travel_date,
+#                     'num_passengers': num_passengers,
+#                     'max_layovers': max_layovers
+#                 })
+
+#                 # Fetch Flights
+#                 flights_query = text("""
+#                     SELECT flight_num, src_airport, dst_airport, dept_time, arrival_time
+#                     FROM Schedule
+#                     WHERE src_airport = :src AND dst_airport = :dst AND departure_date = :date
+#                 """)
+#                 flights = db.session.execute(flights_query, {
+#                     'src': src_IATA,
+#                     'dst': dst_IATA,
+#                     'date': travel_date
+#                 }).fetchall()
+#                 print(flights)
+
+#         elif 'select_flight' in request.form:  # Triggered on Flight Selection
+#             selected_flight = request.form.get('select_flight')
+#             session['selected_flight'] = selected_flight
+#             print(f"Selected Flight: {selected_flight}")
+
+#     # Get Cities for Dropdowns
+#     city_query = text("SELECT DISTINCT city_name FROM Airports")
+#     cities = [row[0] for row in db.session.execute(city_query).fetchall()]
+
+#     return render_template('dashboard.html', cities=cities, flights=flights, selected_flight=selected_flight)
+
+
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required
 def dashboard():
+    flights = None
     if request.method == 'POST':
         source_city = request.form.get('source_city')
         destination_city = request.form.get('destination_city')
@@ -84,19 +145,33 @@ def dashboard():
         dst_IATA = dst_airport[0]
         print(src_IATA, dst_IATA)
 
-        session['src_IATA'] = src_IATA
-        session['dst_IATA'] = dst_IATA
-        session['travel_date'] = travel_date
-        session['num_passengers'] = num_passengers
-        session['max_layovers'] = max_layovers
+        session.update({
+            'src_IATA': src_IATA,
+            'dst_IATA': dst_IATA,
+            'travel_date': travel_date,
+            'num_passengers': num_passengers,
+            'max_layovers': max_layovers
+        })
 
         print(session['src_IATA'], session['dst_IATA'], session['travel_date'], session['num_passengers'], session['max_layovers'])
+
+        flight_query = text("""
+            SELECT flight_num, src_airport, dst_airport, dept_time, arrival_time, base_price
+            FROM Schedule
+            WHERE src_airport = :src_IATA
+            AND dst_airport = :dst_IATA
+            AND dept_date = :travel_date
+        """)
+        flights = db.session.execute(flight_query, {'src_IATA': src_IATA, 'dst_IATA': dst_IATA, 'travel_date': travel_date}).fetchall()
+        print(flights)
+
+
 
     city_query = text("SELECT DISTINCT city_name FROM Airports")
     results = db.session.execute(city_query).fetchall()
     cities = [row[0] for row in results]
 
-    return render_template('dashboard.html', cities=cities)
+    return render_template('dashboard.html', cities=cities, flights = flights)
 
 
     
