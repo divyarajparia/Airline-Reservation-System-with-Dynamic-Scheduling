@@ -28,6 +28,11 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
+# Ensure to logout all users before closing the session
+@app.before_request
+def before_request():
+    db.session.commit()
+
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -73,10 +78,10 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Login")
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def home():
-    form = LoginForm()
-    return render_template('login.html',form=form)
+    # Whenever a user enters, always redirect to login page
+    return redirect(url_for('login'))
 
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required
@@ -128,6 +133,10 @@ def dashboard():
 
 @app.route('/login', methods=['GET','POST'])
 def login():
+    print("Request method:", request.method) 
+    if request.method == "POST":
+        print("POST request received")
+
     form = LoginForm()
 
     if form.validate_on_submit():
