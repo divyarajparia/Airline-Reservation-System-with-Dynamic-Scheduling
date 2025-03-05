@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="wrapper">
+        <form method="POST" action="{{ url_for('register') }}">
+            <h1>Register</h1>
+            {{ form.hidden_tag() }}
+            <div class="input-box">
+                {{ form.first_name(placeholder="First Name", required="required") }}
+                <i class="bx bxs-user"></i>
+            </div>
+
+            <div class="input-box">
+                {{ form.last_name(placeholder="Last Name" ) }}
+                <i class="bx bxs-user"></i>
+            </div>
+
+            <div class="input-box">
+                {{ form.email(placeholder="Email", required="required") }}
+                <i class="bx bxs-envelope"></i>
+            </div>
+
+            <div class="input-box">
+                {{ form.phone_number(placeholder="Phone Number") }}
+                <i class="bx bxs-phone"></i>
+            </div>
+
+
+            <div class="input-box">
+                {{ form.password(placeholder="Password", required="required", type="password") }}
+                <i class="bx bxs-lock-alt"></i>
+            </div>
+            <button type="submit" class="btn">Register</button>
+            <div class="register-link">
+                <p>Already have an account? <a href="{{url_for('login')}}">Sign In</a></p>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

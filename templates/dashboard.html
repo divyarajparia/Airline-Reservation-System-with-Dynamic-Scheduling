@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard_styles.css') }}">
+</head>
+
+<body>
+    <header>
+        <div class="logo">Dashboard</div>
+        <div class="nav-buttons">
+            <button onclick="window.location.href='{{ url_for('logout') }}'">Logout</button>
+            <button onclick="window.location.href='{{ url_for('previous_bookings') }}'">See Previous Bookings</button>
+        </div>
+    </header>
+
+    <h1>Hello, you are logged in</h1>
+
+    <div class="form-container">
+        <form method="POST" action="{{ url_for('dashboard') }}">
+
+            <!-- Source City Dropdown with Search -->
+            <div class="input-container">
+                <label for="source_city">From:</label>
+                <input type="text" id="source_city" name="source_city" placeholder="Enter Source City" onkeyup="filterDropdown('source_city', 'source_dropdown')" autocomplete="off" required>
+                <select id="source_dropdown" class="dropdown" size="5" onchange="selectCity('source_city', this)">
+                    {% for city in cities %}
+                    <option value="{{ city }}">{{ city }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Destination City Dropdown with Search -->
+            <div class="input-container">
+                <label for="destination_city">To:</label>
+                <input type="text" id="destination_city" name="destination_city" placeholder="Enter Destination City" onkeyup="filterDropdown('destination_city', 'destination_dropdown')" autocomplete="off" required>
+                <select id="destination_dropdown" class="dropdown" size="5" onchange="selectCity('destination_city', this)">
+                    {% for city in cities %}
+                    <option value="{{ city }}">{{ city }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Date Input -->
+            <div class="input-box">
+                <label for="travel_date">Travel Date:</label>
+                <input type="date" id="travel_date" name="travel_date" required>
+            </div>
+
+            <div class="input-box">
+                <label for="num_passengers">Number of Passengers:</label>
+                <input type="number" id="num_passengers" name="num_passengers" min="1" max="10" value="1" required>
+            </div>
+
+            <!-- Max Layovers -->
+            <div class="input-box">
+                <label for="max_layovers">Max Layovers:</label>
+                <input type="number" id="max_layovers" name="max_layovers" min="0" max="5" value="0" required>
+            </div>
+
+            <button type="submit">Search Flights</button>
+
+        </form>
+    </div>
+
+    {% if flights %}
+    <h2>Available Flights</h2>
+    <div class="flights-container">
+        {% for flight in flights %}
+        <div class="flight-box">
+            <p><strong>Flight Number:</strong> {{ flight.flight_num }}</p>
+            <p><strong>From:</strong> {{ flight.src_airport }}</p>
+            <p><strong>To:</strong> {{ flight.dst_airport }}</p>
+            <p><strong>Departure Time:</strong> {{ flight.dept_time }}</p>
+            <p><strong>Arrival Time:</strong> {{ flight.arrival_time }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- JavaScript: Dynamic Dropdown Filtering -->
+    <script>
+        // Filters dropdown options as user types (case-insensitive)
+        function filterDropdown(inputId, dropdownId) {
+            const input = document.getElementById(inputId).value.toLowerCase();
+            const dropdown = document.getElementById(dropdownId);
+            const options = dropdown.getElementsByTagName('option');
+            let matchCount = 0;
+
+            for (let option of options) {
+                if (option.value.toLowerCase().includes(input)) {
+                    option.style.display = "block";
+                    matchCount++;
+                } else {
+                    option.style.display = "none";
+                }
+            }
+
+            // Show dropdown if matches found, else hide
+            dropdown.style.display = matchCount > 0 ? "block" : "none";
+        }
+
+        // Selects the city from the dropdown and updates the input field
+        function selectCity(inputId, dropdown) {
+            document.getElementById(inputId).value = dropdown.value;
+            dropdown.style.display = "none";
+        }
+
+        // Hide dropdown if clicked outside
+        document.addEventListener('click', function (event) {
+            if (!event.target.closest('.input-container')) {
+                document.getElementById('source_dropdown').style.display = 'none';
+                document.getElementById('destination_dropdown').style.display = 'none';
+            }
+        });
+    </script>
+
+</body>
+
+</html>

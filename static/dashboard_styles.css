@@ -1,0 +1,148 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007BFF;
+    padding: 10px 20px;
+    color: white;
+}
+
+header .logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+header .nav-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+header .nav-buttons button {
+    background-color: white;
+    color: #007BFF;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+header .nav-buttons button:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.form-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.input-box {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.results {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.result-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.result-item {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    width: calc(50% - 20px);
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.result-item p {
+    margin: 10px 0;
+}
+
+/* Ensure the dropdown aligns with the input box */
+.dropdown {
+    position: absolute;
+    width: 100%; /* Match input width */
+    max-height: 150px; /* Limit visible options (5 items ~30px each) */
+    overflow-y: auto; /* Scroll if too many options */
+    border: 1px solid #ccc;
+    border-top: none;
+    display: none; /* Hide by default */
+    z-index: 1000; /* Ensure it appears above other content */
+    background-color: white;
+}
+
+.dropdown option {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.dropdown option:hover {
+    background-color: #f0f0f0; /* Highlight on hover */
+}
+
+.input-container {
+    position: relative; /* Ensure dropdown positions correctly */
+    width: 300px; /* Fixed width for the input and dropdown */
+}
+
+.flights-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.flight-box {
+    border: 2px solid #4CAF50;
+    border-radius: 12px;
+    padding: 15px;
+    width: 300px;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
+}
