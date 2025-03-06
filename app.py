@@ -86,48 +86,82 @@ def home():
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required
 def dashboard():
-    flights = None
+
+    flight_route_info = None
     if request.method == 'POST':
-        source_city = request.form.get('source_city')
-        destination_city = request.form.get('destination_city')
-        travel_date = request.form.get('travel_date')
-        num_passengers = int(request.form.get('num_passengers'))
-        max_layovers = int(request.form.get('max_layovers'))
+        if "search_flights" in request.form:
+            source_city = request.form.get('source_city')
+            destination_city = request.form.get('destination_city')
+            travel_date = request.form.get('travel_date')
+            num_passengers = int(request.form.get('num_passengers'))
+            max_layovers = int(request.form.get('max_layovers'))
 
-        source_query = text("SELECT IATA_code, airport_name FROM Airports WHERE city_name = :city")
-        src_airport = db.session.execute(source_query, {'city': source_city}).fetchone()
-        dst_airport = db.session.execute(source_query, {'city': destination_city}).fetchone()
-        src_IATA = src_airport[0]
-        dst_IATA = dst_airport[0]
-        print(src_IATA, dst_IATA)
+            source_query = text("SELECT IATA_code, airport_name FROM Airports WHERE city_name = :city")
+            src_airport = db.session.execute(source_query, {'city': source_city}).fetchone()
+            dst_airport = db.session.execute(source_query, {'city': destination_city}).fetchone()
+            src_IATA = src_airport[0]
+            dst_IATA = dst_airport[0]
+            print(src_IATA, dst_IATA)
 
-        session.update({
-            'src_IATA': src_IATA,
-            'dst_IATA': dst_IATA,
-            'travel_date': travel_date,
-            'num_passengers': num_passengers,
-            'max_layovers': max_layovers
-        })
+            session.update({
+                'src_IATA': src_IATA,
+                'dst_IATA': dst_IATA,
+                'travel_date': travel_date,
+                'num_passengers': num_passengers,
+                'max_layovers': max_layovers
+            })
 
-        print(session['src_IATA'], session['dst_IATA'], session['travel_date'], session['num_passengers'], session['max_layovers'])
+            print(session['src_IATA'], session['dst_IATA'], session['travel_date'], session['num_passengers'], session['max_layovers'])
 
-        flight_query = text("""
-            SELECT flight_num, src_airport, dst_airport, dept_time, arrival_time, base_price
-            FROM Schedule
-            WHERE src_airport = :src_IATA
-            AND dst_airport = :dst_IATA
-            AND dept_date = :travel_date
-        """)
-        flights = db.session.execute(flight_query, {'src_IATA': src_IATA, 'dst_IATA': dst_IATA, 'travel_date': travel_date}).fetchall()
-        print(flights)
+            flight_query = text("""CALL FindFlights(:travel_date, :src_IATA, :dst_IATA, :num_passengers, :max_layovers)""")
+            print(flight_query)
+            res = db.session.execute(flight_query, {'travel_date': session["travel_date"], 'src_IATA': session["src_IATA"], 'dst_IATA': session["dst_IATA"], 'num_passengers': session["num_passengers"], 'max_layovers': session["max_layovers"]})
+            res = res.fetchall()
+            print(res)
+            flight_routes = {}
+            for route_id, route in res:
+                schedule_ids = [int(t) for t in route.strip().split()]
+                flight_routes[route_id] = schedule_ids
+            print(flight_routes)
 
+            flight_route_info = {}
+            sched_query = text("""SELECT Schedule_id, Flight_num, src_airport, dst_airport, dept_time, arrival_time, base_price FROM Schedule WHERE Schedule_id = :sched_id""")
+            flight_query = text("""SELECT aircraft_type, airline_name FROM Flight_data WHERE Flight_num = :f_id""")
+            for route_id, schedules in flight_routes.items():
+                route_info = []
+                for sched_id in schedules:
+                    res = db.session.execute(sched_query, {'sched_id': sched_id})
+                    res = res.fetchall()[0]
+                    schedule_id, flight_num, src_airport, dst_airport, dept_time, arrival_time, base_price = res
+                    dept_time, arrival_time, base_price = str(dept_time), str(arrival_time), float(base_price)
+                    res = db.session.execute(flight_query, {'f_id': flight_num})
+                    aircraft_type, airline_name = res.fetchall()[0]
+                    temp = [schedule_id, flight_num, aircraft_type, airline_name ,src_airport, dst_airport, dept_time, arrival_time, base_price]
+                    route_info.append(temp)
 
+                route_id = int(route_id)    
+                flight_route_info[route_id] = route_info
+
+            session['flight_route_info'] = flight_route_info
+            print(flight_route_info)
+        
 
     city_query = text("SELECT DISTINCT city_name FROM Airports")
     results = db.session.execute(city_query).fetchall()
     cities = [row[0] for row in results]
+    return render_template('dashboard.html', cities=cities, flights = flight_route_info )
 
-    return render_template('dashboard.html', cities=cities, flights = flights)
+@app.route('/book_flight', methods=['GET','POST'])
+@login_required
+def book_flight():
+    print("im in---------------------")
+    selected_route_id = str(request.form.get('selected_flight'))
+    print("selected_route_id:", selected_route_id)
+    print(session['flight_route_info'])
+    if selected_route_id:
+        selected_route = session['flight_route_info'][selected_route_id]
+        print("the selected one is:", selected_route)
+    return render_template('book_flight.html')
 
 
 
@@ -176,6 +210,9 @@ def register():
 @login_required
 def previous_bookings():
     return render_template('previous_bookings.html')
+
+
+    # return render_template('book_flight.html')
 
 
 if __name__ == '__main__':

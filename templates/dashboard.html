@@ -16,11 +16,10 @@
         </div>
     </header>
 
-    <h1>Hello, you are logged in</h1>
 
     <div class="form-container">
         <form method="POST" action="{{ url_for('dashboard') }}">
-
+        <input type="hidden" name="search_flights" value="1">
             <!-- Source City Dropdown with Search -->
             <div class="input-container">
                 <label for="source_city">From:</label>
@@ -66,19 +65,29 @@
     </div>
 
     {% if flights %}
-    <h2>Available Flights</h2>
     <div class="flights-container">
-        {% for flight in flights %}
-        <div class="flight-box">
-            <p><strong>Flight Number:</strong> {{ flight.flight_num }}</p>
-            <p><strong>From:</strong> {{ flight.src_airport }}</p>
-            <p><strong>To:</strong> {{ flight.dst_airport }}</p>
-            <p><strong>Departure Time:</strong> {{ flight.dept_time }}</p>
-            <p><strong>Arrival Time:</strong> {{ flight.arrival_time }}</p>
-        </div>
-        {% endfor %}
+        <form method="POST" action="{{ url_for('book_flight') }}">
+            {% for route_id, route in flights.items() %}
+            <label class="flight-card">
+                <input type="radio" name="selected_flight" value="{{ route_id }}" required>
+                <div class="flight-info">
+                    {% set total = namespace(price=0) %}
+                    {% for flight in route %}
+                    <div class="flight-segment">
+                        <p><strong>{{ flight[3] }}</strong> {{ flight[1] }} ({{ flight[2] }})            {{ flight[4] }} ({{ flight[6] }}) → {{ flight[5] }} ({{ flight[7] }})</p>
+                    </div>
+                    {% set total.price = total.price + flight[8] %}
+                    {% endfor %}
+                    <p class="total-price"><strong>Total Price:</strong> ${{ total.price }}</p>
+                </div>
+            </label>
+            {% endfor %}
+            <button type="submit" class="book-btn">Book Now</button>
+        </form>
     </div>
     {% endif %}
+
+    
 
     <!-- JavaScript: Dynamic Dropdown Filtering -->
     <script>
@@ -115,6 +124,8 @@
                 document.getElementById('destination_dropdown').style.display = 'none';
             }
         });
+
+
     </script>
 
 </body>
