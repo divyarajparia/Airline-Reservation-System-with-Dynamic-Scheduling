@@ -1,0 +1,95 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007BFF;
+    padding: 10px 20px;
+    color: white;
+}
+
+header .logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+header .nav-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+header .nav-buttons button {
+    background-color: white;
+    color: #007BFF;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+header .nav-buttons button:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+.selected-flight-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.info-header {
+    width: 100%;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+.route-box {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    display: flex;
+    flex-wrap: nowrap;
+    min-width: 300px;
+}
+
+.flight-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.5rem;
+    border-right: 1px solid #ddd;
+    flex: 1;
+}
+
+.flight-info:last-child {
+    border-right: none;
+}
+
+.flight-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.flight-info p {
+    margin: 0.5rem 0;
+}
+
+.flight-number {
+    font-weight: bold;
+    color: #007bff;
+}

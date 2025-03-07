@@ -158,10 +158,9 @@ def book_flight():
     selected_route_id = str(request.form.get('selected_flight'))
     print("selected_route_id:", selected_route_id)
     print(session['flight_route_info'])
-    if selected_route_id:
-        selected_route = session['flight_route_info'][selected_route_id]
-        print("the selected one is:", selected_route)
-    return render_template('book_flight.html')
+    print(session['flight_route_info'][selected_route_id])
+    print(session["num_passengers"])
+    return render_template('book_flight.html', selected_route = session['flight_route_info'][selected_route_id])
 
 
 

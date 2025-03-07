@@ -3,15 +3,44 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Book here</title>
+    <title>Book Your Flight</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='book_flight_styles.css') }}">
 </head>
 
 <body>
     <header>
-        <div class="logo">Book here</div>
+        <div class="logo"> Book Seats </div>
         <div class="nav-buttons">
-            <button onclick="window.location.href='{{ url_for('dashboard') }}'">go back</button>
+            <button onclick="window.location.href='{{ url_for('dashboard') }}'">Go Back</button>
         </div>
     </header>
+
+    <div class="selected-flight-container">
+        <div class="info-header">Here is your selected flight info</div>
+        <div class="route-box">
+            {% for flight in selected_route %}
+            <div class="flight-info">
+                <div class="flight-details">
+                    <p class="flight-number">Flight Number: {{ flight[1] }}</p>
+                    <p><strong>Aircraft:</strong> {{ flight[2] }}</p>
+                    <p><strong>Airline:</strong> {{ flight[3] }}</p>
+                </div>
+                <div class="flight-details">
+                    <p><strong>From:</strong> {{ flight[4] }}</p>
+                    <p><strong>To:</strong> {{ flight[5] }}</p>
+                </div>
+                <div class="flight-details">
+                    <p><strong>Departure:</strong> {{ flight[6] }}</p>
+                    <p><strong>Arrival:</strong> {{ flight[7] }}</p>
+                </div>
+                <div class="flight-details">
+                    <p><strong>Price:</strong> ${{ flight[8] }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
 </body>
 
+</html>
