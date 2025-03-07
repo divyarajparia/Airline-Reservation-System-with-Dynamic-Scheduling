@@ -41,6 +41,33 @@
         </div>
     </div>
 
+    <form method="POST" action="{{ url_for('book_flight') }}">
+        <input type="hidden" name="selected_flight" value="{{ request.args.get('selected_flight') }}">
+
+        <div class="passenger-info-container">
+            <h2>Passenger Information</h2>
+            {% for i in range(num_passengers) %}
+                <div class="passenger-form">
+                    <h3>Passenger {{ i + 1 }}</h3>
+                    <label for="name_{{ i }}">Name:</label>
+                    <input type="text" name="name_{{ i }}" required><br>
+                    
+                    <label for="ssn_{{ i }}">Social Security Number:</label>
+                    <input type="text" name="ssn_{{ i }}" required><br>
+                    
+                    <label for="phone_number_{{ i }}">Phone Number:</label>
+                    <input type="text" name="phone_number_{{ i }}" required><br>
+
+                    <label for="email_{{ i }}">Email:</label>
+                    <input type="email" name="email_{{ i }}" required><br>
+
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="submit">Confirm Booking</button>
+    </form>
+
 </body>
 
 </html>
