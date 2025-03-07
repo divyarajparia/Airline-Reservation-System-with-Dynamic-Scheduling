@@ -1,0 +1,20 @@
+INSERT INTO Schedule (Flight_num, src_airport, dst_airport, dept_date, arrival_date, dept_time, arrival_time, base_price, seats, status) VALUES
+
+-- BLR -> AUH -> CDG (Etihad, Air France)
+('EY101', 'BLR', 'AUH', '2025-03-15', '2025-03-15', '02:00', '05:30', 450.00, 250, 'Scheduled'),
+('AF381', 'AUH', 'CDG', '2025-03-15', '2025-03-15', '07:00', '12:00', 650.00, 250, 'Scheduled'),
+
+-- BLR -> CDG (Air India direct)
+('AI302', 'BLR', 'CDG', '2025-03-15', '2025-03-15', '04:00', '12:30', 800.00, 280, 'Scheduled'),
+
+-- BLR -> DXB -> CDG (Emirates, Air France)
+('EK501', 'BLR', 'DXB', '2025-03-15', '2025-03-15', '03:30', '06:00', 400.00, 300, 'Scheduled'),
+('AF383', 'DXB', 'CDG', '2025-03-15', '2025-03-15', '08:00', '13:30', 700.00, 280, 'Scheduled'),
+
+-- BLR -> LHR -> CDG (British Airways, Air France)
+('BA118', 'BLR', 'LHR', '2025-03-15', '2025-03-15', '01:30', '07:30', 500.00, 250, 'Scheduled'),
+('AF245', 'LHR', 'CDG', '2025-03-15', '2025-03-15', '09:00', '11:00', 200.00, 180, 'Scheduled'),
+
+-- BLR -> FRA -> CDG (Lufthansa, Air France)
+('LH755', 'BLR', 'FRA', '2025-03-15', '2025-03-15', '02:45', '08:15', 550.00, 260, 'Scheduled'),
+('AF241', 'FRA', 'CDG', '2025-03-15', '2025-03-15', '09:45', '11:00', 180.00, 180, 'Scheduled');

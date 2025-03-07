@@ -1,0 +1,46 @@
+INSERT INTO Airports (IATA_code, airport_name, city_name) VALUES
+-- India
+('BLR', 'Kempegowda International Airport', 'Bangalore'),
+('HYD', 'Rajiv Gandhi International Airport', 'Hyderabad'),
+('DEL', 'Indira Gandhi International Airport', 'New Delhi'),
+('BOM', 'Chhatrapati Shivaji Maharaj International Airport', 'Mumbai'),
+('MAA', 'Chennai International Airport', 'Chennai'),
+('CCU', 'Netaji Subhash Chandra Bose International Airport', 'Kolkata'),
+
+-- Europe
+('LHR', 'Heathrow Airport', 'London'),
+('CDG', 'Charles de Gaulle Airport', 'Paris'),
+('FRA', 'Frankfurt Airport', 'Frankfurt'),
+('AMS', 'Amsterdam Schiphol Airport', 'Amsterdam'),
+('MAD', 'Adolfo Suárez Madrid–Barajas Airport', 'Madrid'),
+('FCO', 'Leonardo da Vinci–Fiumicino Airport', 'Rome'),
+
+-- Southeast Asia
+('SIN', 'Singapore Changi Airport', 'Singapore'),
+('BKK', 'Suvarnabhumi Airport', 'Bangkok'),
+('KUL', 'Kuala Lumpur International Airport', 'Kuala Lumpur'),
+('CGK', 'Soekarno-Hatta International Airport', 'Jakarta'),
+('MNL', 'Ninoy Aquino International Airport', 'Manila'),
+
+-- USA
+('JFK', 'John F. Kennedy International Airport', 'New York'),
+('LAX', 'Los Angeles International Airport', 'Los Angeles'),
+('ORD', 'O\ Hare International Airport', 'Chicago'),
+('DFW', 'Dallas/Fort Worth International Airport', 'Dallas'),
+('SFO', 'San Francisco International Airport', 'San Francisco'),
+('ATL', 'Hartsfield-Jackson Atlanta International Airport', 'Atlanta'),
+
+-- Japan, Aus
+('HND', 'Tokyo Haneda Airport', 'Tokyo'),
+('NRT', 'Narita International Airport', 'Tokyo'),
+('SYD', 'Sydney Kingsford Smith Airport', 'Sydney'),
+('MEL', 'Melbourne Airport', 'Melbourne'),
+('PER', 'Perth Airport', 'Perth'),
+('ADL', 'Adelaide Airport', 'Adelaide'),
+
+('AUH', 'Abu Dhabi International Airport', 'Abu Dhabi'),
+('DXB', 'Dubai International Airport', 'Dubai'),
+('DOH', 'Hamad International Airport', 'Doha'),
+('IST', 'Istanbul Airport', 'Istanbul'),
+('MCT', 'Muscat International Airport', 'Muscat'),
+('SHJ', 'Sharjah International Airport', 'Sharjah');

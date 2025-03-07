@@ -1,0 +1,19 @@
+INSERT INTO Flight_data (Flight_num, airline_name, aircraft_type, src_airport, dst_airport) VALUES
+-- BLR -> AUH -> CDG (Etihad, Air France)
+('EY101', 'Etihad Airways', 'Boeing 787', 'BLR', 'AUH'),
+('AF381', 'Air France', 'Airbus A350', 'AUH', 'CDG'),
+
+-- BLR -> CDG (Air India direct)
+('AI302', 'Air India', 'Boeing 777', 'BLR', 'CDG'),
+
+-- BLR -> DXB -> CDG (Emirates, Air France)
+('EK501', 'Emirates', 'Airbus A380', 'BLR', 'DXB'),
+('AF383', 'Air France', 'Boeing 777', 'DXB', 'CDG'),
+
+-- BLR -> LHR -> CDG (British Airways, Air France)
+('BA118', 'British Airways', 'Boeing 787', 'BLR', 'LHR'),
+('AF245', 'Air France', 'Airbus A320', 'LHR', 'CDG'),
+
+-- BLR -> FRA -> CDG (Lufthansa, Air France)
+('LH755', 'Lufthansa', 'Boeing 747', 'BLR', 'FRA'),
+('AF241', 'Air France', 'Airbus A320', 'FRA', 'CDG');

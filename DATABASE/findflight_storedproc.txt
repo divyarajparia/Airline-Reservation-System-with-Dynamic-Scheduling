@@ -1,0 +1,49 @@
+DELIMITER $$
+
+CREATE PROCEDURE FindFlights(
+    IN p_date DATE,
+    IN p_src CHAR(3),
+    IN p_dst CHAR(3),
+    IN p_seats INT,
+    IN p_max_layovers INT
+)
+BEGIN
+    -- Temporary Table for Storing Flight Routes
+    CREATE TEMPORARY TABLE IF NOT EXISTS FlightRoutes (
+        route_id INT AUTO_INCREMENT PRIMARY KEY,
+        schedule_ids VARCHAR(255)
+    );
+
+    -- Run Recursive Query and Insert Directly
+    INSERT INTO FlightRoutes (schedule_ids)
+    WITH RECURSIVE FlightPaths AS (
+        -- Base Case: Direct Flights
+        SELECT s.Schedule_id, s.src_airport, s.dst_airport, s.dept_date, s.arrival_date, s.dept_time, s.arrival_time, 
+               CAST(s.Schedule_id AS CHAR) AS route, 0 AS layovers
+        FROM Schedule s
+        WHERE s.src_airport = p_src 
+            AND s.dept_date = p_date 
+            AND s.seats >= p_seats
+
+        UNION ALL
+
+        -- Recursive Case: Connecting Flights
+        SELECT s.Schedule_id, f.src_airport, s.dst_airport, f.dept_date, s.arrival_date, f.dept_time, s.arrival_time, 
+               CONCAT(f.route, ' ', s.Schedule_id) AS route, f.layovers + 1
+        FROM Schedule s
+        JOIN FlightPaths f ON s.src_airport = f.dst_airport
+        WHERE f.layovers < p_max_layovers
+            AND s.dept_date >= f.arrival_date
+            AND TIMESTAMPDIFF(HOUR, TIMESTAMP(f.arrival_date, f.arrival_time), TIMESTAMP(s.dept_date, s.dept_time)) BETWEEN 1 AND 24
+            AND s.seats >= p_seats
+    )
+    SELECT route FROM FlightPaths WHERE dst_airport = p_dst;
+
+    -- Display Results
+    SELECT * FROM FlightRoutes;
+
+    -- Cleanup
+    DROP TEMPORARY TABLE FlightRoutes;
+END$$
+
+DELIMITER ;

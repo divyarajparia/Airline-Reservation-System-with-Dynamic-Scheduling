@@ -1,0 +1,109 @@
+CREATE TABLE User_info (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    phone_no VARCHAR(20) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+
+
+CREATE TABLE Airports (
+    IATA_code CHAR(3) PRIMARY KEY,
+    airport_name VARCHAR(255) NOT NULL,
+    city_name VARCHAR(255) NOT NULL
+);
+
+
+CREATE TABLE Flight_data (
+    Flight_num VARCHAR(10) PRIMARY KEY,
+    airline_name VARCHAR(100) NOT NULL,
+    aircraft_type VARCHAR(50) NOT NULL,
+    src_airport CHAR(3) NOT NULL,
+    dst_airport CHAR(3) NOT NULL,
+    FOREIGN KEY (src_airport) REFERENCES Airports(IATA_code) ON DELETE CASCADE,
+    FOREIGN KEY (dst_airport) REFERENCES Airports(IATA_code) ON DELETE CASCADE
+);
+
+
+CREATE TABLE Schedule (
+    Schedule_id INT AUTO_INCREMENT,
+    Flight_num VARCHAR(10),
+    src_airport CHAR(3),
+    dst_airport CHAR(3),
+    dept_date DATE NOT NULL,
+    arrival_date DATE NOT NULL,
+    dept_time TIME NOT NULL,
+    arrival_time TIME NOT NULL,
+    base_price DECIMAL(10,2) NOT NULL,
+    seats INT NOT NULL,
+    status ENUM('Scheduled', 'Delayed', 'Cancelled') DEFAULT 'Scheduled',
+    PRIMARY KEY (Schedule_id, Flight_num),
+    FOREIGN KEY (Flight_num) REFERENCES Flight_data(Flight_num) ON DELETE CASCADE,
+    FOREIGN KEY (src_airport) REFERENCES Airports(IATA_code) ON DELETE CASCADE,
+    FOREIGN KEY (dst_airport) REFERENCES Airports(IATA_code) ON DELETE CASCADE
+);
+
+
+CREATE TABLE Seats (
+    Schedule_id INT,
+    seat_num VARCHAR(10),
+    Flight_num VARCHAR(10),
+    price DECIMAL(10, 2),
+    seat_type VARCHAR(20),
+    status ENUM('available', 'booked') DEFAULT 'available',
+    PRIMARY KEY (Schedule_id, seat_num),
+    FOREIGN KEY (Schedule_id, Flight_num) REFERENCES Schedule(Schedule_id, Flight_num) ON DELETE CASCADE
+);
+
+
+
+CREATE TABLE Traveler_info (
+    social_security_num CHAR(20) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(15) UNIQUE,
+    email VARCHAR(100) UNIQUE
+);
+
+
+CREATE TABLE Trip (
+    social_security_num CHAR(20),
+    PNR VARCHAR(20),
+    Schedule_id INT,
+    booked_by INT,
+    seat_num VARCHAR(10),
+    date_of_booking DATE NOT NULL,
+    status ENUM('confirmed', 'canceled', 'pending') DEFAULT 'confirmed',
+    PRIMARY KEY (social_security_num, PNR, Schedule_id),
+    FOREIGN KEY (social_security_num) REFERENCES Traveler_info(social_security_num) ON DELETE CASCADE,
+    FOREIGN KEY (Schedule_id) REFERENCES Schedule(Schedule_id) ON DELETE CASCADE,
+    FOREIGN KEY (booked_by) REFERENCES User(user_id) ON DELETE 
+);
+
+-- Transaction Log Table
+CREATE TABLE Transaction_Log (
+    Transaction_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    price DECIMAL(10,2) NOT NULL,
+    Time_stamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    comment ENUM('Payment', 'Refund') NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES User_info(user_id) ON DELETE CASCADE
+);
+
+
+
+-- Booking Table
+CREATE TABLE Booking (
+    PNR VARCHAR(10),
+    user_id INT,
+    transaction_id INT,
+    status ENUM('Pending', 'Confirmed', 'Cancelled') DEFAULT 'Pending',
+    PRIMARY KEY (PNR, user_id),
+    FOREIGN KEY (PNR) REFERENCES Trip_data(PNR) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES User_info(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (transaction_id) REFERENCES Transaction_Log(Transaction_id) ON DELETE CASCADE
+);
+
+
+

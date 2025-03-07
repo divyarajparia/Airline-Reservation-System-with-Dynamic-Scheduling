@@ -1,0 +1,23 @@
+-- First Class Seats (1000)
+INSERT INTO Seats (Schedule_id, Flight_num, seat_num, price, seat_type, status)
+SELECT Schedule_id, Flight_num, '1A', 1000, 'First Class', 'available' FROM Schedule
+UNION ALL
+SELECT Schedule_id, Flight_num, '1B', 1000, 'First Class', 'available' FROM Schedule
+UNION ALL
+SELECT Schedule_id, Flight_num, '1C', 1000, 'First Class', 'available' FROM Schedule;
+
+-- Second Class Seats (700)
+INSERT INTO Seats (Schedule_id, Flight_num, seat_num, price, seat_type, status)
+SELECT Schedule_id, Flight_num, '2A', 700, 'Second Class', 'available' FROM Schedule
+UNION ALL
+SELECT Schedule_id, Flight_num, '2B', 700, 'Second Class', 'available' FROM Schedule
+UNION ALL
+SELECT Schedule_id, Flight_num, '2C', 700, 'Second Class', 'available' FROM Schedule;
+
+-- Economy Class Seats (400)
+INSERT INTO Seats (Schedule_id, Flight_num, seat_num, price, seat_type, status)
+SELECT Schedule_id, Flight_num, '3A', 400, 'Economy', 'available' FROM Schedule
+UNION ALL
+SELECT Schedule_id, Flight_num, '3B', 400, 'Economy', 'available' FROM Schedule
+UNION ALL
+SELECT Schedule_id, Flight_num, '3C', 400, 'Economy', 'available' FROM Schedule;
