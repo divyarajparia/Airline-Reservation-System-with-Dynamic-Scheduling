@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Seats</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='select_seats_style.css') }}">
+</head>
+<body>
+    <h1>Select Your Seats</h1>
+    <form method="POST">
+        <div class="seats-container">
+            {% for i in range(num_passengers) %}
+                <div class="passenger-section">
+                    <h3>Passenger {{ i+1 }}: {{ passengers[i].name }} (SSN: {{ passengers[i].ssn }})</h3>
+                    <label for="seat_{{ i }}">Choose Seat:</label>
+                    <select name="seat_{{ i }}" id="seat_{{ i }}" required>
+                        <option value="">Select a seat</option>
+                        {% for seat in available_seats %}
+                            <option value="{{ seat[0] }}">{{ seat[0] }} ({{ seat[2] }}, ${{ seat[1] }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% endfor %}
+        </div>
+        <input type="submit" value="Confirm Seats">
+    </form>
+</body>
+</html>

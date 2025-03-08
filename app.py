@@ -77,6 +77,14 @@ class LoginForm(FlaskForm):
 
     submit = SubmitField("Login")
 
+class TravelerInfo(db.Model):
+    __tablename__ = 'Traveler_info'
+    social_security_num = db.Column(db.String(20), primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(20), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
+
+
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -175,7 +183,12 @@ def book_flight():
                     'ssn': request.form.get(f'ssn_{i}')
                 }
                 passengers.append(pax)
-            print(passengers)
+            session['passengers'] = passengers  
+            print("Passengers stored in session:", passengers)
+            flash("Passenger information saved!", "success")
+            return redirect(url_for('select_seats'))
+
+
 
     # have to work on this
     # if request.method == 'POST':
@@ -188,10 +201,52 @@ def book_flight():
     #             'ssn': request.form.get(f'ssn_{i}')
     #         }
     #         passengers.append(pax)
-    #     print(passengers)
+    #     # print(passengers)
 
 
     return render_template('book_flight.html', selected_route = session['flight_route_info'][session["selected_route_id"]], num_passengers = session["num_passengers"])
+
+@app.route('/select_seats', methods=['GET', 'POST'])
+@login_required
+def select_seats():
+    if request.method == 'GET':
+        # Ensure that selected_route_id exists
+        if 'selected_route_id' not in session:
+            return redirect(url_for('dashboard'))
+        
+        selected_route_id = session['selected_route_id']
+        flight_info = session['flight_route_info'][selected_route_id]
+        
+        # Fetch Schedule_id for the selected flight
+        sched_query = text("SELECT Schedule_id FROM Schedule WHERE Flight_num = :f_id")
+        sched_id = db.session.execute(sched_query, {'f_id': flight_info[0][1]}).fetchone()[0]
+        
+        # Store Schedule_id in session (to avoid querying again later)
+        session['schedule_id'] = sched_id
+
+        # Fetch available seats for the selected flight
+        seat_query = text("SELECT seat_num, price, seat_type FROM Seats WHERE Schedule_id = :sched_id AND status = 'available'")
+        available_seats = db.session.execute(seat_query, {'sched_id': sched_id}).fetchall()
+        
+        passengers = session.get("passengers", [])  # Use the correct key
+
+        return render_template('select_seats.html', available_seats=available_seats, num_passengers=session["num_passengers"], passengers = passengers)
+    
+    # Handle POST request for seat selection (Store in session, NOT database)
+    if request.method == 'POST':
+        selected_seats = []
+        for i in range(session["num_passengers"]):
+            seat = request.form.get(f"seat_{i}")  # Fetch seat for each passenger
+            if seat:
+                selected_seats.append(seat)
+
+        session['selected_seats'] = selected_seats  # Store in session
+
+        print("Selected seats:", selected_seats)  # Debugging output
+
+        return redirect(url_for('select_seats'))  # Redirect to payment (or confirmation)
+    
+    return render_template('select_seats.html')
 
 
 

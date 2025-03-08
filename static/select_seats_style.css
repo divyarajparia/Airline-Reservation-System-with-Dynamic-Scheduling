@@ -1,0 +1,95 @@
+/* General page styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7fc;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* Header styling */
+h1 {
+    font-size: 32px;
+    color: #003366;
+    margin-top: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Container for all passenger sections */
+.seats-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+/* Individual passenger section */
+.passenger-section {
+    width: 100%;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #eaf1ff;
+    text-align: left;
+    font-size: 18px;
+    border-left: 5px solid #0056b3;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Style the passenger heading */
+.passenger-section h3 {
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 20px;
+    color: #003366;
+}
+
+/* Dropdown menu styling */
+.passenger-section select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #0056b3;
+    background: white;
+    color: #003366;
+}
+
+/* Seat selection button */
+input[type="submit"] {
+    width: 80%;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: #003366;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease-in-out;
+}
+
+input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* Make form elements more responsive */
+@media (max-width: 600px) {
+    .seats-container {
+        width: 90%;
+    }
+
+    .passenger-section {
+        padding: 10px;
+        font-size: 16px;
+    }
+}
