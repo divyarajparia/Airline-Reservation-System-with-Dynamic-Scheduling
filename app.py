@@ -155,29 +155,43 @@ def dashboard():
 @login_required
 def book_flight():
 
-    if request.method == 'GET':
-        selected_route_id = str(request.args.get('selected_flight'))
-        print("selected_route_id:", selected_route_id)
-        if selected_route_id:
+    if request.method == 'POST':
+
+        if 'selected_flight' in request.form:
+            selected_route_id = str(request.form.get('selected_flight'))
+            print(session["flight_route_info"])
+            print("selected_route_id:", selected_route_id)
             print(session['flight_route_info'][selected_route_id])
             session['selected_route_id'] = selected_route_id
-            
-    selected_route_id = session['selected_route_id']    
+            selected_route_id = session['selected_route_id']    
 
-    if request.method == 'POST':
-        passengers = []
-        for i in range(session["num_passengers"]):
-            pax = {
-                'name': request.form.get(f'name_{i}'),
-                'phone_number': request.form.get(f'phone_number_{i}'),
-                'email': request.form.get(f'email_{i}'),
-                'ssn': request.form.get(f'ssn_{i}')
-            }
-            passengers.append(pax)
-        print(passengers)
+        elif 'passenger_info' in request.form:
+            passengers = []
+            for i in range(session.get("num_passengers", 1)):
+                pax = {
+                    'name': request.form.get(f'name_{i}'),
+                    'phone_number': request.form.get(f'phone_number_{i}'),
+                    'email': request.form.get(f'email_{i}'),
+                    'ssn': request.form.get(f'ssn_{i}')
+                }
+                passengers.append(pax)
+            print(passengers)
+
+    # have to work on this
+    # if request.method == 'POST':
+    #     passengers = []
+    #     for i in range(session["num_passengers"]):
+    #         pax = {
+    #             'name': request.form.get(f'name_{i}'),
+    #             'phone_number': request.form.get(f'phone_number_{i}'),
+    #             'email': request.form.get(f'email_{i}'),
+    #             'ssn': request.form.get(f'ssn_{i}')
+    #         }
+    #         passengers.append(pax)
+    #     print(passengers)
 
 
-    return render_template('book_flight.html', selected_route = session['flight_route_info'][selected_route_id], num_passengers = session["num_passengers"])
+    return render_template('book_flight.html', selected_route = session['flight_route_info'][session["selected_route_id"]], num_passengers = session["num_passengers"])
 
 
 
