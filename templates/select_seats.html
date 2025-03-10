@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -23,6 +23,35 @@
                 </div>
             {% endfor %}
         </div>
+        <input type="submit" value="Confirm Seats">
+    </form>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Seats</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='select_seats_style.css') }}">
+</head>
+<body>
+    <h1>Select Seats</h1>
+    <form method="POST">
+        {% for flight in flight_info %}
+            <h2>Flight {{ flight[1] }}: {{ flight[4] }} to {{ flight[5] }}</h2>
+            {% for i in range(num_passengers) %}
+                Passenger {{ i+1 }}: {{ passengers[i].name }} (SSN: {{ passengers[i].ssn }})
+                <select name="seat_{{ flight[1] }}_{{ i }}">
+                    <option value="">Select a seat</option>
+                    {% for seat in available_seats[flight[1]] %}
+                        <option value="{{ seat[0] }}">{{ seat[0] }} ({{ seat[2] }}, ${{ seat[1] }})</option>
+                    {% endfor %}
+                </select>
+                <br>
+            {% endfor %}
+        {% endfor %}
         <input type="submit" value="Confirm Seats">
     </form>
 </body>
