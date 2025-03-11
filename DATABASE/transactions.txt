@@ -1,0 +1,77 @@
+create table Transactions(
+	transaction_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    price INT NOT NULL,
+    time_stamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    transaction_type ENUM('payment', 'refund') NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES User(user_id)
+);
+
+create table Bookings(
+	PNR char(6),
+    user_id INT,
+    transaction_id INT,
+    status_of_booking ENUM('payment', 'refund') NOT NULL,
+    PRIMARY KEY (PNR, user_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id),
+	FOREIGN KEY (transaction_id) REFERENCES Transactions(transaction_id)
+);
+
+CREATE TABLE Trip(
+	SSN char(20),
+    PNR char(6),
+    Schedule_id INT,
+    booked_by INT,
+    seat_num varchar(10),
+    date_of_booking date,
+    status ENUM('confirmed', 'pending', 'cancelled'),
+    PRIMARY KEY (SSN, PNR, Schedule_id),
+    FOREIGN KEY (booked_by) REFERENCES User(user_id),
+    FOREIGN KEY (Schedule_id) REFERENCES Schedule(Schedule_id)
+);
+
+DELIMITER //
+
+CREATE PROCEDURE ConfirmPayment(
+    IN user_id INT,
+    IN total_price DECIMAL(10,2),
+    IN PNR char(6)
+)
+BEGIN
+    DECLARE transaction_id INT;
+    
+    -- Insert into transactions table
+    INSERT INTO Transactions (user_id, price, time_stamp, transaction_type)
+    VALUES (user_id, total_price, NOW(), 'payment');
+    
+    -- Get the last inserted transaction_id
+    SET transaction_id = LAST_INSERT_ID();
+    
+    -- Insert into Bookings table
+    INSERT INTO Bookings
+    VALUES (PNR, user_id, transaction_id, 'payment');
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE ConfirmSeat(
+    IN user_id INT,
+    IN sch_id INT,
+    IN seat_no VARCHAR(5),
+    IN SSN char(20),
+    IN PNR char(6)
+)
+BEGIN
+	-- Insert seat status in the Seats Table
+    UPDATE Seats
+    SET status = 'booked'
+    WHERE Schedule_id = sch_id AND seat_num = seat_no;
+    
+    -- Insert into trip table
+	INSERT INTO Trip
+    VALUES (SSN, PNR, sch_id, user_id, seat_no, CURDATE(), 'confirmed');
+END //
+
+DELIMITER ;

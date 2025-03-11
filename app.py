@@ -1,3 +1,4 @@
+import string
 from flask import Flask, render_template, url_for, redirect, request, session
 from flask_sqlalchemy import SQLAlchemy 
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
@@ -9,6 +10,7 @@ from flask_bcrypt import Bcrypt
 from dotenv import load_dotenv
 from sqlalchemy import text
 from flask import flash
+import random
 
 import pymysql
 pymysql.install_as_MySQLdb()
@@ -83,8 +85,6 @@ class TravelerInfo(db.Model):
     name = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(100), nullable=False)
-
-
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -283,11 +283,9 @@ def select_seats():
         
         print("Selected seats:", selected_seats)
         
-        return redirect(url_for('login'))  # Implement payment route later
+        return redirect(url_for('payments'))  # Implement payment route later
         
     return render_template('select_seats.html', available_seats=available_seats, num_passengers=session["num_passengers"], passengers=session['passengers'], flight_info=flight_info)
-
-
 
 
 @app.route('/login', methods=['GET','POST'])
@@ -338,6 +336,73 @@ def previous_bookings():
 
 
     # return render_template('book_flight.html')
+
+@app.route('/payments', methods=['GET', 'POST'])
+@login_required
+def payments():
+    if request.method == 'GET':
+        if 'selected_seats' not in session or 'selected_route_id' not in session:
+            return redirect(url_for('dashboard'))
+        
+        select_seats = session['selected_seats']
+        total_price=0
+        seat_details=[]
+
+        print("Selected seats: ", select_seats)
+
+        for flight_num, seats in select_seats.items():
+            for seat in seats:
+                seat_price = db.session.execute(
+                    text("SELECT price FROM Seats WHERE seat_num = :seat AND Flight_num = :flight_num"), 
+                    {'seat': seat, 'flight_num': flight_num}
+                ).fetchone()
+
+                if seat_price:
+                    total_price += seat_price[0]
+                    seat_details.append((flight_num,seat,seat_price[0]))
+            
+        session['total_price'] = total_price
+
+        return render_template('payments.html', total_price=total_price, seat_details=seat_details)
+    else:
+        # Create stored procedure
+        selected_route_id = session['selected_route_id']
+        selected_seats = session['selected_seats']
+        total_price = session.get('total_price', 0)
+
+        pnr = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
+        
+        try:
+            with db.engine.connect() as conn:
+                for flight_num, seats in selected_seats.items():
+                    counter = 0
+                    for seat in seats:
+                        ssn = session['passengers'][counter]['ssn']
+                        counter += 1
+                        conn.execute(text("""CALL ConfirmSeat(:user_id, :schedule_id, :seat_num, :ssn, :pnr)"""), {
+                            'user_id': current_user.user_id,
+                            'schedule_id': selected_route_id,
+                            'seat_num': seat,
+                            'ssn': ssn,
+                            'pnr': pnr
+                        })
+                        conn.commit()
+                
+                conn.execute(text("""CALL ConfirmPayment(:user_id, :total_price, :pnr)"""), {
+                    'user_id': current_user.user_id,
+                    'total_price': total_price,
+                    'pnr': pnr
+                })
+                conn.commit()
+                
+                flash("Payment successful. Your booking is confirmed.", "success")
+                return render_template('receipt.html')
+
+        except Exception as e:
+            db.session.rollback()
+            print("Failed:", str(e))
+            flash(f"Payment failed: {str(e)}", "danger")
+            return redirect(url_for('dashboard'))
 
 
 if __name__ == '__main__':

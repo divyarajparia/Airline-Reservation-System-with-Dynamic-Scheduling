@@ -7,14 +7,11 @@ CREATE TABLE User_info (
     password VARCHAR(255) NOT NULL
 );
 
-
-
 CREATE TABLE Airports (
     IATA_code CHAR(3) PRIMARY KEY,
     airport_name VARCHAR(255) NOT NULL,
     city_name VARCHAR(255) NOT NULL
 );
-
 
 CREATE TABLE Flight_data (
     Flight_num VARCHAR(10) PRIMARY KEY,
@@ -25,7 +22,6 @@ CREATE TABLE Flight_data (
     FOREIGN KEY (src_airport) REFERENCES Airports(IATA_code) ON DELETE CASCADE,
     FOREIGN KEY (dst_airport) REFERENCES Airports(IATA_code) ON DELETE CASCADE
 );
-
 
 CREATE TABLE Schedule (
     Schedule_id INT AUTO_INCREMENT,
@@ -45,7 +41,6 @@ CREATE TABLE Schedule (
     FOREIGN KEY (dst_airport) REFERENCES Airports(IATA_code) ON DELETE CASCADE
 );
 
-
 CREATE TABLE Seats (
     Schedule_id INT,
     seat_num VARCHAR(10),
@@ -57,15 +52,12 @@ CREATE TABLE Seats (
     FOREIGN KEY (Schedule_id, Flight_num) REFERENCES Schedule(Schedule_id, Flight_num) ON DELETE CASCADE
 );
 
-
-
 CREATE TABLE Traveler_info (
     social_security_num CHAR(20) PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     phone VARCHAR(15) UNIQUE,
     email VARCHAR(100) UNIQUE
 );
-
 
 CREATE TABLE Trip (
     social_security_num CHAR(20),
@@ -91,8 +83,6 @@ CREATE TABLE Transaction_Log (
     FOREIGN KEY (user_id) REFERENCES User_info(user_id) ON DELETE CASCADE
 );
 
-
-
 -- Booking Table
 CREATE TABLE Booking (
     PNR VARCHAR(10),
@@ -104,6 +94,3 @@ CREATE TABLE Booking (
     FOREIGN KEY (user_id) REFERENCES User_info(user_id) ON DELETE CASCADE,
     FOREIGN KEY (transaction_id) REFERENCES Transaction_Log(Transaction_id) ON DELETE CASCADE
 );
-
-
-
