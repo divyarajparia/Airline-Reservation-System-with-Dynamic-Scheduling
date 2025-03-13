@@ -424,6 +424,8 @@ def select_seats():
 def payments():
     selected_route_id = session['selected_route_id']
     flight_info = session['flight_route_info'][selected_route_id]
+    seat_details=[]
+    user_details=[]
 
     if request.method == 'GET':
         if 'selected_seats' not in session or 'selected_route_id' not in session:
@@ -431,42 +433,54 @@ def payments():
         
         selected_seats = session['selected_seats']
         total_price=0
-        seat_details=[]
+
 
         print("Selected seats: ", selected_seats)
 
-        # selected_route_id = session['selected_route_id']
-        # flight_info = session['flight_route_info'][selected_route_id]
-
         print("flight info", flight_info)
+
+        added_user = False
+        global_counter = 0
 
         for schd_id, seats in selected_seats.items():
             counter = 0
+            global_counter+=1
             for seat in seats:
+                ssn = session['passengers'][counter]['ssn']
+                name = session['passengers'][counter]['name']
+                phone = session['passengers'][counter]['phone_number']
+                mail = session['passengers'][counter]['email']
+
                 seat_price = db.session.execute(
                     text("SELECT price FROM Seats WHERE seat_num = :seat AND Schedule_id = :schd_id"), 
                     {'seat': seat, 'schd_id': schd_id}
+                ).fetchone()
+
+                flight_number = db.session.execute(
+                    text("SELECT Flight_num FROM Schedule WHERE Schedule_id = :schd_id"),
+                    {'schd_id': schd_id}
                 ).fetchone()
 
                 counter += 1
 
                 if seat_price:
                     total_price += seat_price[0]
-                    seat_details.append((schd_id,seat,seat_price[0]))
+                    seat_details.append((schd_id,seat,seat_price[0],flight_number[0], name))
+                    if global_counter == 1:
+                        user_details.append((ssn,name,phone,mail))       
             
         session['total_price'] = total_price
+        session['seat_details'] = seat_details
+        session['user_details'] = user_details
+        print("Seat details: ",select_seats)
 
-        return render_template('payments.html', total_price=total_price, seat_details=seat_details)
+        return render_template('payments.html', total_price=total_price, seat_details=seat_details, user_details=user_details)
     else:
-        # Create stored procedure
-
         selected_seats = session['selected_seats']
         total_price = session.get('total_price', 0)
 
         print(flight_info)
         print("selected seats: ",selected_seats)
-
-        # print("HI", session['flight_route_info'[selected_route_id]])
 
         pnr = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
 
@@ -492,7 +506,7 @@ def payments():
                             'email': mail
                         })
                         conn.commit()
-                    counter+=1
+                        counter+=1
                 
                 conn.execute(text("""CALL ConfirmPayment(:user_id, :total_price, :pnr)"""), {
                     'user_id': current_user.user_id,
@@ -502,7 +516,17 @@ def payments():
                 conn.commit()
                 
                 flash("Payment successful. Your booking is confirmed.", "success")
-                return render_template('receipt.html')
+                # seat_details = [(schd_id, seat, price, flight_num, name, pnr) for (schd_id, seat, price, flight_num, name) in seat_details]
+                # user_details = [(ssn, name, phone, mail, pnr) for (ssn, name, phone, mail) in user_details]
+
+                seat_details = session['seat_details']
+                user_details = session['user_details']
+
+                print("Seat Details", seat_details)
+                print("User Details: " ,user_details)
+                receipt_number = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))  # Generates a 10-character receipt number
+
+                return render_template('receipt.html', total_price=total_price, seat_details=seat_details, user_details=user_details, pnr=pnr, receipt_number=receipt_number)
 
         except Exception as e:
             db.session.rollback()

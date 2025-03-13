@@ -4,18 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Payments</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='payments_style.css') }}">
 </head>
 <body>
     <h1>Payments Summary</h1>
 
-    <h2>Seat Details:</h2>
-    <ul>
-        {% for flight, seat, price in seat_details %}
-            <li>Flight {{ flight }} - Seat {{ seat }} (${{ price }}) </li>
+    <!-- Passenger Details Section -->
+    <section>
+        <h2>Please Confirm the Passengers' Details</h2>
+        {% for ssn, name, phone, mail in user_details %}
+        <div class="passenger-card">
+            <h3>{{ name }}</h3>
+            <p><strong>SSN:</strong> {{ ssn }}</p>
+            <p><strong>Email:</strong> {{ mail }}</p>
+            <p><strong>Phone:</strong> {{ phone }}</p>
+        </div>
         {% endfor %}
-    </ul>
+    </section>
 
-    <h2>Total Price  : ${{ total_price }}</h2>
+    <!-- Seat Details Section -->
+    <section>
+        <h2>Seat Details</h2>
+        {% for schedule_id, seat, price, flight_num, name in seat_details %}
+        <div class="boarding-pass">
+            <div class="left">
+                <h3>{{ name }}</h3>
+                <p>Flight: <strong>{{ flight_num }}</strong></p>
+                <p>Seat: <strong>{{ seat }}</strong></p>
+            </div>
+            <div class="right">
+                <p>Price: <strong>${{ price }}</strong></p>
+            </div>
+        </div>
+        {% endfor %}
+    </section>
+
+    <h2 class="total-price">Total Price: ${{ total_price }}</h2>
 
     <form method="POST">
         <button type="submit">Confirm Payment</button>

@@ -3,9 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Payment Receipt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='receipt_style.css') }}">
 </head>
 <body>
-    <h1>This is your receipt</h1>
+    <div class="receipt-container">
+        <h1>Flight Payment Receipt</h1>
+
+        <div class="receipt-header">
+            <p><strong>Receipt No:</strong> {{ receipt_number }}</p>
+            <p><strong>PNR:</strong> {{ pnr }}</p>  <!-- PNR displayed globally -->
+            <p><strong>Date:</strong> <span id="receipt-date"></span></p>
+        </div>
+
+        <section>
+            <h2>Passenger Details</h2>
+            {% for ssn, name, phone, mail in user_details %}
+            <div class="passenger-info">
+                <p><strong>Name:</strong> {{ name }}</p>
+                <p><strong>SSN:</strong> {{ ssn }}</p>
+                <p><strong>Email:</strong> {{ mail }}</p>
+                <p><strong>Phone:</strong> {{ phone }}</p>
+            </div>
+            {% endfor %}
+        </section>
+
+        <section>
+            <h2>Flight Details</h2>
+            {% for schedule_id, seat, price, flight_num, name in seat_details %}
+            <div class="flight-info">
+                <p><strong>Flight Number:</strong> {{ flight_num }}</p>
+                <p><strong>Passenger:</strong> {{ name }}</p>
+                <p><strong>Seat Number:</strong> {{ seat }}</p>
+                <p><strong>Price:</strong> ${{ price }}</p>
+            </div>
+            {% endfor %}
+        </section>
+
+        <h2 class="total-price">Total Amount: ${{ total_price }}</h2>
+
+        <button onclick="window.print()">Print Receipt</button>
+    </div>
+
+    <script>
+        // Auto-fill the date
+        document.getElementById("receipt-date").textContent = new Date().toLocaleDateString();
+    </script>
 </body>
 </html>

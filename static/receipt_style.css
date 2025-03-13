@@ -1,0 +1,88 @@
+/* General Styles */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #ffffff; /* White background */
+    color: #0d47a1; /* Deep blue text */
+    text-align: center;
+}
+
+/* Receipt Container */
+.receipt-container {
+    background: #e3f2fd; /* Light Blue */
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    text-align: left;
+}
+
+/* Header */
+h1 {
+    color: #0d47a1;
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* Receipt Header */
+.receipt-header {
+    text-align: center;
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Sections */
+h2 {
+    color: #1565c0;
+    border-bottom: 2px solid #1565c0;
+    display: inline-block;
+    padding-bottom: 5px;
+    margin-top: 20px;
+}
+
+/* Passenger Info */
+.passenger-info,
+.flight-info {
+    background: #ffffff;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.passenger-info p,
+.flight-info p {
+    margin: 5px 0;
+    font-size: 1rem;
+}
+
+/* Total Price */
+.total-price {
+    font-size: 1.4rem;
+    color: #d32f2f;
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Print Button */
+button {
+    display: block;
+    background-color: #1565c0;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    margin: 20px auto;
+}
+
+button:hover {
+    background-color: #0d47a1;
+    transform: scale(1.05);
+}
