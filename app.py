@@ -374,6 +374,9 @@ def previous_bookings():
 @app.route('/payments', methods=['GET', 'POST'])
 @login_required
 def payments():
+    selected_route_id = session['selected_route_id']
+    flight_info = session['flight_route_info'][selected_route_id]
+
     if request.method == 'GET':
         if 'selected_seats' not in session or 'selected_route_id' not in session:
             return redirect(url_for('dashboard'))
@@ -384,12 +387,20 @@ def payments():
 
         print("Selected seats: ", select_seats)
 
+        # selected_route_id = session['selected_route_id']
+        # flight_info = session['flight_route_info'][selected_route_id]
+
+        print("flight info",flight_info)
+
         for flight_num, seats in select_seats.items():
+            counter = 0
             for seat in seats:
                 seat_price = db.session.execute(
-                    text("SELECT price FROM Seats WHERE seat_num = :seat AND Flight_num = :flight_num"), 
-                    {'seat': seat, 'flight_num': flight_num}
+                    text("SELECT price FROM Seats WHERE seat_num = :seat AND Schedule_id = :schd_id"), 
+                    {'seat': seat, 'schd_id': flight_info[counter][0]}
                 ).fetchone()
+
+                counter += 1
 
                 if seat_price:
                     total_price += seat_price[0]
@@ -400,27 +411,32 @@ def payments():
         return render_template('payments.html', total_price=total_price, seat_details=seat_details)
     else:
         # Create stored procedure
-        selected_route_id = session['selected_route_id']
+
         selected_seats = session['selected_seats']
         total_price = session.get('total_price', 0)
+
+        print(flight_info)
+        print("selected seats: ",selected_seats)
+
+        # print("HI", session['flight_route_info'[selected_route_id]])
 
         pnr = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
         
         try:
             with db.engine.connect() as conn:
-                for flight_num, seats in selected_seats.items():
+                for schd_id, seats in selected_seats.items():
                     counter = 0
                     for seat in seats:
                         ssn = session['passengers'][counter]['ssn']
-                        counter += 1
                         conn.execute(text("""CALL ConfirmSeat(:user_id, :schedule_id, :seat_num, :ssn, :pnr)"""), {
                             'user_id': current_user.user_id,
-                            'schedule_id': selected_route_id,
+                            'schedule_id': schd_id,
                             'seat_num': seat,
                             'ssn': ssn,
                             'pnr': pnr
                         })
                         conn.commit()
+                    counter+=1
                 
                 conn.execute(text("""CALL ConfirmPayment(:user_id, :total_price, :pnr)"""), {
                     'user_id': current_user.user_id,
