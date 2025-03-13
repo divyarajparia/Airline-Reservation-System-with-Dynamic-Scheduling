@@ -91,6 +91,55 @@ def home():
     # Whenever a user enters, always redirect to login page
     return redirect(url_for('login'))
 
+@app.route('/login', methods=['GET','POST'])
+def login():
+    print("Request method:", request.method) 
+    if request.method == "POST":
+        print("POST request received")
+
+    form = LoginForm()
+
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            if user and bcrypt.check_password_hash(user.password, form.password.data):
+                login_user(user)
+                return redirect(url_for('dashboard'))
+            else:
+                flash('Login unsuccessful. Please check email and password', 'error')
+
+    return render_template('login.html', form=form)
+
+@app.route('/logout',methods=['GET','POST'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+@app.route('/register', methods=['GET','POST'])
+def register():
+    form = RegistrationForm() 
+
+    if form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        new_user = User(email=form.email.data, password=hashed_password, first_name=form.first_name.data,last_name=form.last_name.data,phone_number=form.phone_number.data)
+        db.session.add(new_user)
+        db.session.commit()
+        flash('Your account has been created! You are now able to log in', 'success')
+        return redirect(url_for('login'))
+    else:
+        print(form.errors)
+
+    return render_template('register.html', form=form)
+
+@app.route('/previous_bookings')
+@login_required
+def previous_bookings():
+    return render_template('previous_bookings.html')
+
+
+    # return render_template('book_flight.html')
+
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required
 def dashboard():
@@ -299,7 +348,7 @@ def select_seats():
         
         available_seats = {}
         for flight in flight_info:
-            schedule_id = flight[0]  # Assuming schedule_id is the first element in flight info
+            schedule_id = flight[0]  # sched_id
             seat_query = text("SELECT seat_num, price, seat_type FROM Seats WHERE Schedule_id = :sched_id AND status = 'available'")
             available_seats[schedule_id] = db.session.execute(seat_query, {'sched_id': schedule_id}).fetchall()
         
@@ -322,54 +371,6 @@ def select_seats():
     return render_template('select_seats.html', available_seats=available_seats, num_passengers=session["num_passengers"], passengers=session['passengers'], flight_info=flight_info)
 
 
-@app.route('/login', methods=['GET','POST'])
-def login():
-    print("Request method:", request.method) 
-    if request.method == "POST":
-        print("POST request received")
-
-    form = LoginForm()
-
-    if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
-        if user:
-            if user and bcrypt.check_password_hash(user.password, form.password.data):
-                login_user(user)
-                return redirect(url_for('dashboard'))
-            else:
-                flash('Login unsuccessful. Please check email and password', 'error')
-
-    return render_template('login.html', form=form)
-
-@app.route('/logout',methods=['GET','POST'])
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('login'))
-
-@app.route('/register', methods=['GET','POST'])
-def register():
-    form = RegistrationForm() 
-
-    if form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
-        new_user = User(email=form.email.data, password=hashed_password, first_name=form.first_name.data,last_name=form.last_name.data,phone_number=form.phone_number.data)
-        db.session.add(new_user)
-        db.session.commit()
-        flash('Your account has been created! You are now able to log in', 'success')
-        return redirect(url_for('login'))
-    else:
-        print(form.errors)
-
-    return render_template('register.html', form=form)
-
-@app.route('/previous_bookings')
-@login_required
-def previous_bookings():
-    return render_template('previous_bookings.html')
-
-
-    # return render_template('book_flight.html')
 
 @app.route('/payments', methods=['GET', 'POST'])
 @login_required
