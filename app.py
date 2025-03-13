@@ -432,7 +432,12 @@ def payments():
             return redirect(url_for('dashboard'))
         
         selected_seats = session['selected_seats']
+        flight_info = session['flight_route_info'][session['selected_route_id']]
         total_price=0
+        base_price = 0
+        for flight_leg in flight_info:
+            base_price += float(flight_leg[8])
+        total_price += base_price * session['num_passengers']
 
 
         print("Selected seats: ", selected_seats)
@@ -464,7 +469,7 @@ def payments():
                 counter += 1
 
                 if seat_price:
-                    total_price += seat_price[0]
+                    total_price += float(seat_price[0])
                     seat_details.append((schd_id,seat,seat_price[0],flight_number[0], name))
                     if global_counter == 1:
                         user_details.append((ssn,name,phone,mail))       
