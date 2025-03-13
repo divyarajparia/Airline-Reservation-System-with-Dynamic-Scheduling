@@ -135,10 +135,51 @@ def register():
 @app.route('/previous_bookings')
 @login_required
 def previous_bookings():
-    return render_template('previous_bookings.html')
+    previous_bookings_query = text("""
+        SELECT T.PNR, T.Schedule_id, T.seat_num, 
+               S.Flight_num, S.src_airport, S.dst_airport
+        FROM Trip T
+        JOIN Schedule S ON T.Schedule_id = S.Schedule_id  -- Fixed table alias here
+        WHERE T.booked_by = :user_id
+        ORDER BY T.PNR  -- Ensure results are grouped
+    """)
+    
+    previous_bookings = db.session.execute(previous_bookings_query, {'user_id': current_user.user_id}).fetchall()
+    
+    user_query = text("""
+        SELECT first_name, last_name, email
+        FROM User
+        WHERE user_id = :user_id
+    """)
+    
+    user_result = db.session.execute(user_query, {'user_id': current_user.user_id}).fetchone()
 
+    first_name, last_name, email = user_result if user_result else ("N/A", "N/A", "N/A")
 
-    # return render_template('book_flight.html')
+    user_info = {"first_name": first_name, "last_name": last_name, "email": email}
+
+    # Group bookings by PNR
+    bookings_by_pnr = {}
+    for row in previous_bookings:
+        pnr, schedule_id, seat_num, flight_num, src_airport, dst_airport = row  # Access by index
+
+        if pnr not in bookings_by_pnr:
+            bookings_by_pnr[pnr] = []
+
+        bookings_by_pnr[pnr].append({
+            "Schedule_id": schedule_id,
+            "seat_num": seat_num,
+            "Flight_num": flight_num,
+            "src_airport": src_airport,
+            "dst_airport": dst_airport
+        })
+
+    return render_template(
+        "previous_bookings.html", 
+        bookings_by_pnr=bookings_by_pnr, 
+        user_info=user_info
+    )
+
 
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required
