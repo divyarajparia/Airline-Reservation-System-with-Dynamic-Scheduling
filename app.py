@@ -469,6 +469,8 @@ def payments():
         # print("HI", session['flight_route_info'[selected_route_id]])
 
         pnr = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
+
+        print("Passangers info : ",session['passengers'])
         
         try:
             with db.engine.connect() as conn:
@@ -476,12 +478,18 @@ def payments():
                     counter = 0
                     for seat in seats:
                         ssn = session['passengers'][counter]['ssn']
-                        conn.execute(text("""CALL ConfirmSeat(:user_id, :schedule_id, :seat_num, :ssn, :pnr)"""), {
+                        name = session['passengers'][counter]['name']
+                        phone = session['passengers'][counter]['phone_number']
+                        mail = session['passengers'][counter]['email']
+                        conn.execute(text("""CALL ConfirmSeat(:user_id, :schedule_id, :seat_num, :ssn, :pnr, :name, :phone, :email)"""), {
                             'user_id': current_user.user_id,
                             'schedule_id': schd_id,
                             'seat_num': seat,
                             'ssn': ssn,
-                            'pnr': pnr
+                            'pnr': pnr,
+                            'name': name,
+                            'phone': phone,
+                            'email': mail
                         })
                         conn.commit()
                     counter+=1
