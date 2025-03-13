@@ -1,4 +1,4 @@
-INSERT INTO Flight_data (Flight_num, airline_name, aircraft_type, src_airport, dst_airport) VALUES
+INSERT INTO flights (Flight_num, airline_name, aircraft_type, src_airport, dst_airport) VALUES
 -- BLR -> AUH -> CDG (Etihad, Air France)
 ('EY101', 'Etihad Airways', 'Boeing 787', 'BLR', 'AUH'),
 ('AF381', 'Air France', 'Airbus A350', 'AUH', 'CDG'),
@@ -16,4 +16,93 @@ INSERT INTO Flight_data (Flight_num, airline_name, aircraft_type, src_airport, d
 
 -- BLR -> FRA -> CDG (Lufthansa, Air France)
 ('LH755', 'Lufthansa', 'Boeing 747', 'BLR', 'FRA'),
-('AF241', 'Air France', 'Airbus A320', 'FRA', 'CDG');
+('AF241', 'Air France', 'Airbus A320', 'FRA', 'CDG'),
+
+-- BLR -> SIN -> LAX (Singapore Airlines, American Airlines)
+('SQ421', 'Singapore Airlines', 'Airbus A350', 'BLR', 'SIN'),
+('AA182', 'American Airlines', 'Boeing 777', 'SIN', 'LAX'),
+
+-- BLR -> HND -> LAX (Japan Airlines)
+('JL754', 'Japan Airlines', 'Boeing 787', 'BLR', 'HND'),
+('JL062', 'Japan Airlines', 'Boeing 787', 'HND', 'LAX'),
+
+-- BLR -> DOH -> JFK (Qatar Airways)
+('QR573', 'Qatar Airways', 'Airbus A350', 'BLR', 'DOH'),
+('QR701', 'Qatar Airways', 'Airbus A350', 'DOH', 'JFK'),
+
+-- BLR -> IST -> LAX (Turkish Airlines)
+('TK567', 'Turkish Airlines', 'Boeing 777', 'BLR', 'IST'),
+('TK009', 'Turkish Airlines', 'Boeing 777', 'IST', 'LAX'),
+
+-- LAX -> SIN -> BLR (American Airlines, Singapore Airlines)
+('AA183', 'American Airlines', 'Boeing 777', 'LAX', 'SIN'),
+('SQ422', 'Singapore Airlines', 'Airbus A350', 'SIN', 'BLR'),
+
+-- LAX -> HND -> BLR (Japan Airlines)
+('JL061', 'Japan Airlines', 'Boeing 787', 'LAX', 'HND'),
+('JL753', 'Japan Airlines', 'Boeing 787', 'HND', 'BLR'),
+
+-- JFK -> DOH -> BLR (Qatar Airways)
+('QR702', 'Qatar Airways', 'Airbus A350', 'JFK', 'DOH'),
+('QR572', 'Qatar Airways', 'Airbus A350', 'DOH', 'BLR'),
+
+-- LAX -> IST -> BLR (Turkish Airlines)
+('TK010', 'Turkish Airlines', 'Boeing 777', 'LAX', 'IST'),
+('TK568', 'Turkish Airlines', 'Boeing 777', 'IST', 'BLR'),
+
+-- BOM -> SIN -> FRA (Singapore Airlines, Lufthansa)
+('SQ423', 'Singapore Airlines', 'Airbus A350', 'BOM', 'SIN'),
+('LH456', 'Lufthansa', 'Boeing 747', 'SIN', 'FRA'),
+
+-- BOM -> HND (Air India direct)
+('AI314', 'Air India', 'Boeing 777', 'BOM', 'HND'),
+
+-- BOM -> FCO (Alitalia direct)
+('AZ771', 'Alitalia', 'Airbus A330', 'BOM', 'FCO'),
+
+-- BOM -> LHR (British Airways direct)
+('BA198', 'British Airways', 'Boeing 787', 'BOM', 'LHR'),
+
+-- HYD -> DOH -> FRA (Qatar Airways, Lufthansa)
+('QR500', 'Qatar Airways', 'Airbus A350', 'HYD', 'DOH'),
+('LH431', 'Lufthansa', 'Boeing 747', 'DOH', 'FRA'),
+
+-- HYD -> SIN (Singapore Airlines direct)
+('SQ523', 'Singapore Airlines', 'Airbus A350', 'HYD', 'SIN'),
+
+-- HYD -> LHR (British Airways direct)
+('BA276', 'British Airways', 'Boeing 787', 'HYD', 'LHR'),
+
+-- DEL -> IST -> FCO (Turkish Airlines, Alitalia)
+('TK717', 'Turkish Airlines', 'Boeing 777', 'DEL', 'IST'),
+('AZ709', 'Alitalia', 'Airbus A330', 'IST', 'FCO'),
+
+-- DEL -> SIN (Air India direct)
+('AI382', 'Air India', 'Boeing 777', 'DEL', 'SIN'),
+
+-- DEL -> HND (Japan Airlines direct)
+('JL740', 'Japan Airlines', 'Boeing 787', 'DEL', 'HND'),
+
+-- DEL -> FRA (Lufthansa direct)
+('LH761', 'Lufthansa', 'Boeing 747', 'DEL', 'FRA'),
+
+-- DXB -> AMS (Emirates direct)
+('EK201', 'Emirates', 'Airbus A380', 'DXB', 'AMS'),
+
+-- DXB -> CCU (Emirates direct)
+('EK572', 'Emirates', 'Boeing 777', 'DXB', 'CCU'),
+
+-- DXB -> BKK (Emirates direct)
+('EK384', 'Emirates', 'Boeing 777', 'DXB', 'BKK'),
+
+-- DOH -> ADL (Qatar Airways direct)
+('QR914', 'Qatar Airways', 'Airbus A350', 'DOH', 'ADL'),
+
+-- DOH -> KUL (Qatar Airways direct)
+('QR848', 'Qatar Airways', 'Airbus A350', 'DOH', 'KUL'),
+
+-- AUH -> FCO (Etihad Airways direct)
+('EY83', 'Etihad Airways', 'Boeing 777', 'AUH', 'FCO'),
+
+-- AUH -> LHR (Etihad Airways direct)
+('EY11', 'Etihad Airways', 'Airbus A380', 'AUH', 'LHR');

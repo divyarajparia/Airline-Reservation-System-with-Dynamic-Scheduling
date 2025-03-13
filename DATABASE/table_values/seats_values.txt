@@ -1,23 +1,31 @@
--- First Class Seats (1000)
+-- First Class Seats (175)
 INSERT INTO Seats (Schedule_id, Flight_num, seat_num, price, seat_type, status)
-SELECT Schedule_id, Flight_num, '1A', 1000, 'First Class', 'available' FROM Schedule
+SELECT Schedule_id, Flight_num, '1A', 175, 'First Class', 'available' FROM Schedule
 UNION ALL
-SELECT Schedule_id, Flight_num, '1B', 1000, 'First Class', 'available' FROM Schedule
+SELECT Schedule_id, Flight_num, '1B', 175, 'First Class', 'available' FROM Schedule
 UNION ALL
-SELECT Schedule_id, Flight_num, '1C', 1000, 'First Class', 'available' FROM Schedule;
+SELECT Schedule_id, Flight_num, '1C', 175, 'First Class', 'available' FROM Schedule;
 
--- Second Class Seats (700)
+-- Second Class Seats (100)
 INSERT INTO Seats (Schedule_id, Flight_num, seat_num, price, seat_type, status)
-SELECT Schedule_id, Flight_num, '2A', 700, 'Second Class', 'available' FROM Schedule
+SELECT Schedule_id, Flight_num, '2A', 100, 'Business Class', 'available' FROM Schedule
 UNION ALL
-SELECT Schedule_id, Flight_num, '2B', 700, 'Second Class', 'available' FROM Schedule
+SELECT Schedule_id, Flight_num, '2B', 100, 'Business Class', 'available' FROM Schedule
 UNION ALL
-SELECT Schedule_id, Flight_num, '2C', 700, 'Second Class', 'available' FROM Schedule;
+SELECT Schedule_id, Flight_num, '2C', 100, 'Business Class', 'available' FROM Schedule;
 
--- Economy Class Seats (400)
+-- Economy Class Seats (40)
 INSERT INTO Seats (Schedule_id, Flight_num, seat_num, price, seat_type, status)
-SELECT Schedule_id, Flight_num, '3A', 400, 'Economy', 'available' FROM Schedule
+SELECT Schedule_id, Flight_num, '3A', 40, 'Economy', 'available' FROM Schedule
 UNION ALL
-SELECT Schedule_id, Flight_num, '3B', 400, 'Economy', 'available' FROM Schedule
+SELECT Schedule_id, Flight_num, '3B', 40, 'Economy', 'available' FROM Schedule
 UNION ALL
-SELECT Schedule_id, Flight_num, '3C', 400, 'Economy', 'available' FROM Schedule;
+SELECT Schedule_id, Flight_num, '3C', 40, 'Economy', 'available' FROM Schedule;
+
+-- Economy Class Seats (40)
+INSERT INTO Seats (Schedule_id, Flight_num, seat_num, price, seat_type, status)
+SELECT Schedule_id, Flight_num, '4A', 40, 'Economy', 'available' FROM Schedule
+UNION ALL
+SELECT Schedule_id, Flight_num, '4B', 40, 'Economy', 'available' FROM Schedule
+UNION ALL
+SELECT Schedule_id, Flight_num, '4C', 40, 'Economy', 'available' FROM Schedule;

@@ -1,20 +1,142 @@
-INSERT INTO Schedule (Schedule_id, Flight_num, src_airport, dst_airport, dept_date, arrival_date, dept_time, arrival_time, base_price, seats, status) VALUES
 
+INSERT INTO Schedule (Flight_num, src_airport, dst_airport, dept_date, arrival_date, dept_time, arrival_time, base_price, seats, status) VALUES
 -- BLR -> AUH -> CDG (Etihad, Air France)
-(1, 'EY101', 'BLR', 'AUH', '2025-03-15', '2025-03-15', '02:00', '05:30', 450.00, 250, 'Scheduled'),
-(2, 'AF381', 'AUH', 'CDG', '2025-03-15', '2025-03-15', '07:00', '12:00', 650.00, 250, 'Scheduled'),
+('EY101', 'BLR', 'AUH', '2025-04-01', '2025-04-01', '02:00', '05:30', 450.00, 12, 'Scheduled'),
+('AF381', 'AUH', 'CDG', '2025-04-01', '2025-04-01', '07:00', '12:00', 650.00, 12, 'Scheduled'),
 
 -- BLR -> CDG (Air India direct)
-(3, 'AI302', 'BLR', 'CDG', '2025-03-15', '2025-03-15', '04:00', '12:30', 800.00, 280, 'Scheduled'),
+('AI302', 'BLR', 'CDG', '2025-04-01', '2025-04-01', '04:00', '12:30', 800.00, 12, 'Scheduled'),
 
 -- BLR -> DXB -> CDG (Emirates, Air France)
-(4, 'EK501', 'BLR', 'DXB', '2025-03-15', '2025-03-15', '03:30', '06:00', 400.00, 300, 'Scheduled'),
-(5, 'AF383', 'DXB', 'CDG', '2025-03-15', '2025-03-15', '08:00', '13:30', 700.00, 280, 'Scheduled'),
+('EK501', 'BLR', 'DXB', '2025-04-01', '2025-04-01', '03:30', '06:00', 400.00, 12, 'Scheduled'),
+('AF383', 'DXB', 'CDG', '2025-04-01', '2025-04-01', '08:00', '13:30', 700.00, 12, 'Scheduled'),
 
 -- BLR -> LHR -> CDG (British Airways, Air France)
-(6, 'BA118', 'BLR', 'LHR', '2025-03-15', '2025-03-15', '01:30', '07:30', 500.00, 250, 'Scheduled'),
-(7, 'AF245', 'LHR', 'CDG', '2025-03-15', '2025-03-15', '09:00', '11:00', 200.00, 180, 'Scheduled'),
+('BA118', 'BLR', 'LHR', '2025-04-01', '2025-04-01', '01:30', '07:30', 500.00, 12, 'Scheduled'),
+('AF245', 'LHR', 'CDG', '2025-04-01', '2025-04-01', '09:00', '11:00', 200.00, 12, 'Scheduled'),
 
 -- BLR -> FRA -> CDG (Lufthansa, Air France)
-(8, 'LH755', 'BLR', 'FRA', '2025-03-15', '2025-03-15', '02:45', '08:15', 550.00, 260, 'Scheduled'),
-(9, 'AF241', 'FRA', 'CDG', '2025-03-15', '2025-03-15', '09:45', '11:00', 180.00, 180, 'Scheduled');
+('LH755', 'BLR', 'FRA', '2025-04-01', '2025-04-01', '02:45', '08:15', 550.00, 12, 'Scheduled'),
+('AF241', 'FRA', 'CDG', '2025-04-01', '2025-04-01', '09:45', '11:00', 180.00, 12, 'Scheduled'),
+
+-- BLR -> SIN -> LAX (Singapore Airlines, American Airlines)
+('SQ421', 'BLR', 'SIN', '2025-04-01', '2025-04-01', '03:00', '08:30', 600.00, 12, 'Scheduled'),
+('AA182', 'SIN', 'LAX', '2025-04-01', '2025-04-01', '10:00', '18:00', 900.00, 12, 'Scheduled'),
+
+-- BLR -> HND -> LAX (Japan Airlines)
+('JL754', 'BLR', 'HND', '2025-04-01', '2025-04-01', '04:00', '12:00', 700.00, 12, 'Scheduled'),
+('JL062', 'HND', 'LAX', '2025-04-01', '2025-04-01', '13:00', '20:00', 850.00, 12, 'Scheduled'),
+
+-- BLR -> DOH -> JFK (Qatar Airways)
+('QR573', 'BLR', 'DOH', '2025-04-01', '2025-04-01', '05:00', '08:30', 500.00, 12, 'Scheduled'),
+('QR701', 'DOH', 'JFK', '2025-04-01', '2025-04-01', '10:00', '18:00', 1000.00, 12, 'Scheduled'),
+
+-- BLR -> IST -> LAX (Turkish Airlines)
+('TK567', 'BLR', 'IST', '2025-04-01', '2025-04-01', '06:00', '10:30', 550.00, 12, 'Scheduled'),
+('TK009', 'IST', 'LAX', '2025-04-01', '2025-04-01', '12:00', '20:00', 950.00, 12, 'Scheduled'),
+
+-- LAX -> SIN -> BLR (American Airlines, Singapore Airlines)
+('AA183', 'LAX', 'SIN', '2025-04-01', '2025-04-01', '14:00', '22:00', 900.00, 12, 'Scheduled'),
+('SQ422', 'SIN', 'BLR', '2025-04-01', '2025-04-01', '23:00', '02:00', 600.00, 12, 'Scheduled'),
+
+-- LAX -> HND -> BLR (Japan Airlines)
+('JL061', 'LAX', 'HND', '2025-04-01', '2025-04-01', '15:00', '21:00', 850.00, 12, 'Scheduled'),
+('JL753', 'HND', 'BLR', '2025-04-01', '2025-04-01', '23:00', '04:00', 700.00, 12, 'Scheduled'),
+
+-- JFK -> DOH -> BLR (Qatar Airways)
+('QR702', 'JFK', 'DOH', '2025-04-01', '2025-04-01', '16:00', '23:00', 1000.00, 12, 'Scheduled'),
+('QR572', 'DOH', 'BLR', '2025-04-01', '2025-04-01', '01:00', '06:00', 500.00, 12, 'Scheduled'),
+
+-- LAX -> IST -> BLR (Turkish Airlines)
+('TK010', 'LAX', 'IST', '2025-04-01', '2025-04-01', '07:00', '18:00', 950.00, 12, 'Scheduled'),
+('TK568', 'IST', 'BLR', '2025-04-01', '2025-04-01', '02:00', '08:00', 550.00, 12, 'Scheduled'),
+
+-- BOM -> SIN -> FRA (Singapore Airlines, Lufthansa)
+('SQ423', 'BOM', 'SIN', '2025-04-01', '2025-04-01', '03:00', '08:30', 600.00, 12, 'Scheduled'),
+('LH456', 'SIN', 'FRA', '2025-04-01', '2025-04-01', '10:00', '18:00', 800.00, 12, 'Scheduled'),
+
+-- BOM -> HND (Air India direct)
+('AI314', 'BOM', 'HND', '2025-04-01', '2025-04-01', '04:00', '12:00', 700.00, 12, 'Scheduled'),
+
+-- BOM -> FCO (Alitalia direct)
+('AZ771', 'BOM', 'FCO', '2025-04-01', '2025-04-01', '05:00', '10:30', 750.00, 12, 'Scheduled'),
+
+-- BOM -> LHR (British Airways direct)
+('BA198', 'BOM', 'LHR', '2025-04-01', '2025-04-01', '06:00', '12:00', 800.00, 12, 'Scheduled'),
+
+-- HYD -> DOH -> FRA (Qatar Airways, Lufthansa)
+('QR500', 'HYD', 'DOH', '2025-04-01', '2025-04-01', '07:00', '10:30', 500.00, 12, 'Scheduled'),
+('LH431', 'DOH', 'FRA', '2025-04-01', '2025-04-01', '12:00', '18:00', 700.00, 12, 'Scheduled'),
+
+-- HYD -> SIN (Singapore Airlines direct)
+('SQ523', 'HYD', 'SIN', '2025-04-01', '2025-04-01', '08:00', '13:30', 600.00, 12, 'Scheduled'),
+
+-- HYD -> LHR (British Airways direct)
+('BA276', 'HYD', 'LHR', '2025-04-01', '2025-04-01', '09:00', '15:00', 800.00, 12, 'Scheduled'),
+
+-- DEL -> IST -> FCO (Turkish Airlines, Alitalia)
+('TK717', 'DEL', 'IST', '2025-04-01', '2025-04-01', '10:00', '14:30', 550.00, 12, 'Scheduled'),
+('AZ709', 'IST', 'FCO', '2025-04-01', '2025-04-01', '16:00', '19:00', 400.00, 12, 'Scheduled'),
+
+-- DEL -> SIN (Air India direct)
+('AI382', 'DEL', 'SIN', '2025-04-01', '2025-04-01', '11:00', '17:30', 650.00, 12, 'Scheduled'),
+
+-- DEL -> HND (Japan Airlines direct)
+('JL740', 'DEL', 'HND', '2025-04-01', '2025-04-01', '12:00', '20:00', 700.00, 12, 'Scheduled'),
+
+-- DEL -> FRA (Lufthansa direct)
+('LH761', 'DEL', 'FRA', '2025-04-01', '2025-04-01', '13:00', '19:00', 750.00, 12, 'Scheduled'),
+
+-- DXB -> AMS (Emirates direct)
+('EK201', 'DXB', 'AMS', '2025-04-01', '2025-04-01', '14:00', '19:00', 600.00, 12, 'Scheduled'),
+
+-- DXB -> CCU (Emirates direct)
+('EK572', 'DXB', 'CCU', '2025-04-01', '2025-04-01', '15:00', '20:00', 500.00, 12, 'Scheduled'),
+
+-- DXB -> BKK (Emirates direct)
+('EK384', 'DXB', 'BKK', '2025-04-01', '2025-04-01', '16:00', '22:00', 550.00, 12, 'Scheduled'),
+
+-- DOH -> ADL (Qatar Airways direct)
+('QR914', 'DOH', 'ADL', '2025-04-01', '2025-04-01', '05:00', '22:00', 900.00, 12, 'Scheduled'),
+
+-- DOH -> KUL (Qatar Airways direct)
+('QR848', 'DOH', 'KUL', '2025-04-01', '2025-04-01', '06:00', '12:00', 700.00, 12, 'Scheduled'),
+
+-- AUH -> FCO (Etihad Airways direct)
+('EY83', 'AUH', 'FCO', '2025-04-01', '2025-04-01', '19:00', '23:00', 750.00, 12, 'Scheduled'),
+
+-- AUH -> LHR (Etihad Airways direct)
+('EY11', 'AUH', 'LHR', '2025-04-01', '2025-04-01', '08:00', '15:00', 800.00, 12, 'Scheduled');
+
+-----------------------------------------------------------------------------------------------
+To add for all dates
+
+CREATE TABLE temp_dates (
+    new_date DATE
+);
+
+INSERT INTO temp_dates (new_date)
+VALUES 
+    ('2025-04-02'),
+    ('2025-04-03'),
+    ('2025-04-04'),
+    ('2025-04-05');
+
+
+INSERT INTO Schedule (Flight_num, src_airport, dst_airport, dept_date, arrival_date, dept_time, arrival_time, base_price, seats, status)
+SELECT 
+    f.Flight_num,
+    f.src_airport,
+    f.dst_airport,
+    d.new_date AS dept_date,  -- Use the new date
+    d.new_date AS arrival_date,  -- Use the new date
+    f.dept_time,
+    f.arrival_time,
+    f.base_price,
+    f.seats,
+    f.status
+FROM 
+    Schedule f
+    CROSS JOIN temp_dates d
+WHERE 
+    f.dept_date = '2025-04-01';  -- Filter for flights on 1 April 2025
