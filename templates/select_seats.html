@@ -40,18 +40,17 @@
     <h1>Select Seats</h1>
     <form method="POST">
         {% for flight in flight_info %}
-            <h2>Flight {{ flight[1] }}: {{ flight[4] }} to {{ flight[5] }}</h2>
-            {% for i in range(num_passengers) %}
-                Passenger {{ i+1 }}: {{ passengers[i].name }} (SSN: {{ passengers[i].ssn }})
-                <select name="seat_{{ flight[1] }}_{{ i }}">
-                    <option value="">Select a seat</option>
-                    {% for seat in available_seats[flight[1]] %}
-                        <option value="{{ seat[0] }}">{{ seat[0] }} ({{ seat[2] }}, ${{ seat[1] }})</option>
-                    {% endfor %}
-                </select>
-                <br>
+    <h2>Flight {{ flight[1] }}: {{ flight[4] }} to {{ flight[5] }} (Schedule ID: {{ flight[0] }})</h2>
+    {% for i in range(num_passengers) %}
+        <p>Passenger {{ i+1 }}: {{ passengers[i].name }} (SSN: {{ passengers[i].ssn }})</p>
+        <select name="seat_{{ flight[0] }}_{{ i }}">
+            <option value="">Select a seat</option>
+            {% for seat in available_seats[flight[0]] %}
+                <option value="{{ seat[0] }}">{{ seat[0] }} ({{ seat[2] }}, ${{ seat[1] }})</option>
             {% endfor %}
-        {% endfor %}
+        </select>
+    {% endfor %}
+{% endfor %}
         <input type="submit" value="Confirm Seats">
         <!-- <a href="{{ url_for('payments') }}" class="btn">Confirm Seats</a> -->
     </form>

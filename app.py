@@ -248,6 +248,45 @@ def book_flight():
     
 #     return render_template('select_seats.html')
 
+# @app.route('/select_seats', methods=['GET', 'POST'])
+# @login_required
+# def select_seats():
+#     if request.method == 'GET':
+#         if 'selected_route_id' not in session:
+#             return redirect(url_for('dashboard'))
+        
+#         selected_route_id = session['selected_route_id']
+#         flight_info = session['flight_route_info'][selected_route_id]
+        
+#         available_seats = {}
+        
+#         for flight in flight_info:
+#             sched_id = db.session.execute(text("SELECT Schedule_id FROM Schedule WHERE Flight_num = :f_id"), {'f_id': flight[1]}).fetchone()[0]
+#             seat_query = text("SELECT seat_num, price, seat_type FROM Seats WHERE Schedule_id = :sched_id AND status = 'available'")
+#             available_seats[flight[1]] = db.session.execute(seat_query, {'sched_id': sched_id}).fetchall()
+        
+#         return render_template('select_seats.html', available_seats=available_seats, num_passengers=session["num_passengers"], flight_info=flight_info, passengers=session['passengers'])
+    
+#     if request.method == 'POST':
+#         selected_seats = {}
+        
+#         for flight in session['flight_route_info'][session['selected_route_id']]:
+#             flight_num = flight[1]
+#             selected_seats[flight_num] = []
+            
+#             for i in range(session["num_passengers"]):
+#                 seat = request.form.get(f"seat_{flight_num}_{i}")
+#                 if seat:
+#                     selected_seats[flight_num].append(seat)
+        
+#         session['selected_seats'] = selected_seats
+        
+#         print("Selected seats:", selected_seats)
+        
+#         return redirect(url_for('payments'))  # Implement payment route later
+        
+#     return render_template('select_seats.html', available_seats=available_seats, num_passengers=session["num_passengers"], passengers=session['passengers'], flight_info=flight_info)
+
 @app.route('/select_seats', methods=['GET', 'POST'])
 @login_required
 def select_seats():
@@ -259,32 +298,27 @@ def select_seats():
         flight_info = session['flight_route_info'][selected_route_id]
         
         available_seats = {}
-        
         for flight in flight_info:
-            sched_id = db.session.execute(text("SELECT Schedule_id FROM Schedule WHERE Flight_num = :f_id"), {'f_id': flight[1]}).fetchone()[0]
+            schedule_id = flight[0]  # Assuming schedule_id is the first element in flight info
             seat_query = text("SELECT seat_num, price, seat_type FROM Seats WHERE Schedule_id = :sched_id AND status = 'available'")
-            available_seats[flight[1]] = db.session.execute(seat_query, {'sched_id': sched_id}).fetchall()
+            available_seats[schedule_id] = db.session.execute(seat_query, {'sched_id': schedule_id}).fetchall()
         
         return render_template('select_seats.html', available_seats=available_seats, num_passengers=session["num_passengers"], flight_info=flight_info, passengers=session['passengers'])
     
     if request.method == 'POST':
         selected_seats = {}
-        
         for flight in session['flight_route_info'][session['selected_route_id']]:
-            flight_num = flight[1]
-            selected_seats[flight_num] = []
-            
+            schedule_id = flight[0]
+            selected_seats[schedule_id] = []
             for i in range(session["num_passengers"]):
-                seat = request.form.get(f"seat_{flight_num}_{i}")
+                seat = request.form.get(f"seat_{schedule_id}_{i}")
                 if seat:
-                    selected_seats[flight_num].append(seat)
+                    selected_seats[schedule_id].append(seat)
         
         session['selected_seats'] = selected_seats
-        
         print("Selected seats:", selected_seats)
-        
-        return redirect(url_for('payments'))  # Implement payment route later
-        
+        return redirect(url_for('payments'))
+    
     return render_template('select_seats.html', available_seats=available_seats, num_passengers=session["num_passengers"], passengers=session['passengers'], flight_info=flight_info)
 
 
