@@ -381,30 +381,30 @@ def payments():
         if 'selected_seats' not in session or 'selected_route_id' not in session:
             return redirect(url_for('dashboard'))
         
-        select_seats = session['selected_seats']
+        selected_seats = session['selected_seats']
         total_price=0
         seat_details=[]
 
-        print("Selected seats: ", select_seats)
+        print("Selected seats: ", selected_seats)
 
         # selected_route_id = session['selected_route_id']
         # flight_info = session['flight_route_info'][selected_route_id]
 
-        print("flight info",flight_info)
+        print("flight info", flight_info)
 
-        for flight_num, seats in select_seats.items():
+        for schd_id, seats in selected_seats.items():
             counter = 0
             for seat in seats:
                 seat_price = db.session.execute(
                     text("SELECT price FROM Seats WHERE seat_num = :seat AND Schedule_id = :schd_id"), 
-                    {'seat': seat, 'schd_id': flight_info[counter][0]}
+                    {'seat': seat, 'schd_id': schd_id}
                 ).fetchone()
 
                 counter += 1
 
                 if seat_price:
                     total_price += seat_price[0]
-                    seat_details.append((flight_num,seat,seat_price[0]))
+                    seat_details.append((schd_id,seat,seat_price[0]))
             
         session['total_price'] = total_price
 
