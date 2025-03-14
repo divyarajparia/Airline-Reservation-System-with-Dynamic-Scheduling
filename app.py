@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from sqlalchemy import text
 from flask import flash
 import random
+from datetime import datetime, date, time, timedelta
 
 import pymysql
 pymysql.install_as_MySQLdb()
@@ -136,14 +137,13 @@ def register():
 @login_required
 def previous_bookings():
     previous_bookings_query = text("""
-        SELECT T.PNR, T.Schedule_id, T.seat_num, 
-               S.Flight_num, S.src_airport, S.dst_airport
+        SELECT T.PNR, T.Schedule_id, T.seat_num, T.status,
+        S.Flight_num, S.src_airport, S.dst_airport, S.dept_date, S.dept_time
         FROM Trip T
-        JOIN Schedule S ON T.Schedule_id = S.Schedule_id  -- Fixed table alias here
+        JOIN Schedule S ON T.Schedule_id = S.Schedule_id
         WHERE T.booked_by = :user_id
-        ORDER BY T.PNR  -- Ensure results are grouped
+        ORDER BY T.PNR
     """)
-    
     previous_bookings = db.session.execute(previous_bookings_query, {'user_id': current_user.user_id}).fetchall()
     
     user_query = text("""
@@ -158,27 +158,68 @@ def previous_bookings():
 
     user_info = {"first_name": first_name, "last_name": last_name, "email": email}
 
-    # Group bookings by PNR
+    # Group bookings by PNR and check cancellation eligibility
     bookings_by_pnr = {}
+    current_date = datetime.now().date()
     for row in previous_bookings:
-        pnr, schedule_id, seat_num, flight_num, src_airport, dst_airport = row  # Access by index
-
+        pnr, schedule_id, seat_num, status, flight_num, src_airport, dst_airport, dept_date, dept_time = row
+        dept_time = (datetime.min + dept_time).time()
         if pnr not in bookings_by_pnr:
             bookings_by_pnr[pnr] = []
-
+        
+        # Check if the flight is more than 24 hours away
+        flight_datetime = datetime.combine(dept_date, dept_time)
+        can_cancel = (flight_datetime - datetime.now()).total_seconds() > 86400 and status != 'canceled'
+        
         bookings_by_pnr[pnr].append({
             "Schedule_id": schedule_id,
             "seat_num": seat_num,
             "Flight_num": flight_num,
             "src_airport": src_airport,
-            "dst_airport": dst_airport
+            "dst_airport": dst_airport,
+            "dept_date": dept_date,
+            "dept_time": dept_time,
+            "can_cancel": can_cancel,
+            "status": status
         })
+    
+    return render_template("previous_bookings.html", bookings_by_pnr=bookings_by_pnr, user_info=user_info)
 
-    return render_template(
-        "previous_bookings.html", 
-        bookings_by_pnr=bookings_by_pnr, 
-        user_info=user_info
-    )
+
+@app.route('/cancel_booking/<pnr>', methods=['POST'])
+@login_required
+def cancel_booking(pnr):
+    try:
+        # Update Trip status to 'canceled'
+        db.session.execute(text("""
+            UPDATE Trip 
+            SET status = 'cancelled' 
+            WHERE PNR = :pnr AND booked_by = :user_id
+        """), {'pnr': pnr, 'user_id': current_user.user_id})
+        # Update Seats status to 'available'
+        db.session.execute(text("""
+            UPDATE Seats s
+            JOIN Trip t ON s.Schedule_id = t.Schedule_id AND s.seat_num = t.seat_num
+            SET s.status = 'available'
+            WHERE t.PNR = :pnr AND t.booked_by = :user_id
+        """), {'pnr': pnr, 'user_id': current_user.user_id})
+
+        # Create a refund transaction
+        db.session.execute(text("""
+            INSERT INTO Transactions (user_id, price, transaction_type)
+            SELECT :user_id, -SUM(s.price), 'refund'
+            FROM Trip t
+            JOIN Seats s ON t.Schedule_id = s.Schedule_id AND t.seat_num = s.seat_num
+            WHERE t.PNR = :pnr AND t.booked_by = :user_id
+        """), {'user_id': current_user.user_id, 'pnr': pnr})
+
+        db.session.commit()
+        flash("Booking canceled successfully. Refund initiated.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Cancellation failed: {str(e)}", "danger")
+    
+    return redirect(url_for('previous_bookings'))
 
 
 @app.route('/dashboard', methods=['GET','POST'])

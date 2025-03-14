@@ -1,23 +1,36 @@
 /* General Styling */
 body {
     background-color: #f8f9fa;
+    padding: 20px;
+    font-family: Arial, sans-serif;
 }
 
 /* User Info Card */
 .user-info {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    padding: 20px;
+    margin-bottom: 30px;
+    padding: 25px;
     background-color: white;
     border-radius: 8px;
+}
+
+.user-info h2 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.user-info p {
+    margin-bottom: 10px;
+    font-size: 16px;
 }
 
 /* Booking Card */
 .booking {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
+    margin-bottom: 30px;
     background-color: white;
     border-radius: 8px;
+    overflow: hidden;
 }
 
 /* Card Header */
@@ -26,17 +39,42 @@ body {
     color: white;
     font-weight: bold;
     text-transform: uppercase;
-    border-radius: 8px 8px 0 0;
+    padding: 15px 20px;
+    font-size: 18px;
 }
 
 /* Table Styling */
-.table {
-    margin-bottom: 0;
+.table-responsive {
+    overflow-x: auto;
 }
 
-.table thead {
+.table {
+    margin-bottom: 0;
+    width: 100%;
+    min-width: 800px;
+    border-collapse: separate;
+    border-spacing: 0 15px;
+}
+
+.table thead th {
     background-color: #e9ecef;
     font-weight: bold;
+    border-bottom: 2px solid #dee2e6;
+    padding: 15px 20px;
+}
+
+.table th, .table td {
+    padding: 15px 20px;
+    vertical-align: middle;
+    border-top: none;
+}
+
+.table tbody tr {
+    transition: background-color 0.3s ease;
+}
+
+.table tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
 }
 
 .table tbody tr:hover {
@@ -45,7 +83,21 @@ body {
 
 /* Back to Dashboard Button */
 .btn-secondary {
-    padding: 10px 20px;
+    padding: 12px 24px;
     font-size: 16px;
     border-radius: 5px;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* No Bookings Message */
+.no-bookings {
+    text-align: center;
+    font-size: 18px;
+    color: #6c757d;
+    margin-top: 30px;
 }
