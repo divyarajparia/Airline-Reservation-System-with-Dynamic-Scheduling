@@ -190,29 +190,8 @@ def previous_bookings():
 @login_required
 def cancel_booking(pnr):
     try:
-        # Update Trip status to 'canceled'
-        db.session.execute(text("""
-            UPDATE Trip 
-            SET status = 'cancelled' 
-            WHERE PNR = :pnr AND booked_by = :user_id
-        """), {'pnr': pnr, 'user_id': current_user.user_id})
-        # Update Seats status to 'available'
-        db.session.execute(text("""
-            UPDATE Seats s
-            JOIN Trip t ON s.Schedule_id = t.Schedule_id AND s.seat_num = t.seat_num
-            SET s.status = 'available'
-            WHERE t.PNR = :pnr AND t.booked_by = :user_id
-        """), {'pnr': pnr, 'user_id': current_user.user_id})
-
-        # Create a refund transaction
-        db.session.execute(text("""
-            INSERT INTO Transactions (user_id, price, transaction_type)
-            SELECT :user_id, -SUM(s.price), 'refund'
-            FROM Trip t
-            JOIN Seats s ON t.Schedule_id = s.Schedule_id AND t.seat_num = s.seat_num
-            WHERE t.PNR = :pnr AND t.booked_by = :user_id
-        """), {'user_id': current_user.user_id, 'pnr': pnr})
-
+        db.session.execute(text("CALL CancelBooking(:pnr, :user_id)"), 
+                    {'pnr': pnr, 'user_id': current_user.user_id})
         db.session.commit()
         flash("Booking canceled successfully. Refund initiated.", "success")
     except Exception as e:
@@ -325,104 +304,7 @@ def book_flight():
             flash("Passenger information saved!", "success")
             return redirect(url_for('select_seats'))
 
-
-
-    # have to work on this
-    # if request.method == 'POST':
-    #     passengers = []
-    #     for i in range(session["num_passengers"]):
-    #         pax = {
-    #             'name': request.form.get(f'name_{i}'),
-    #             'phone_number': request.form.get(f'phone_number_{i}'),
-    #             'email': request.form.get(f'email_{i}'),
-    #             'ssn': request.form.get(f'ssn_{i}')
-    #         }
-    #         passengers.append(pax)
-    #     # print(passengers)
-
-
     return render_template('book_flight.html', selected_route = session['flight_route_info'][session["selected_route_id"]], num_passengers = session["num_passengers"])
-
-# @app.route('/select_seats', methods=['GET', 'POST'])
-# @login_required
-# def select_seats():
-#     if request.method == 'GET':
-#         # Ensure that selected_route_id exists
-#         if 'selected_route_id' not in session:
-#             return redirect(url_for('dashboard'))
-        
-#         selected_route_id = session['selected_route_id']
-#         flight_info = session['flight_route_info'][selected_route_id]
-        
-#         # Fetch Schedule_id for the selected flight
-#         sched_query = text("SELECT Schedule_id FROM Schedule WHERE Flight_num = :f_id")
-#         sched_id = db.session.execute(sched_query, {'f_id': flight_info[0][1]}).fetchone()[0]
-        
-#         # Store Schedule_id in session (to avoid querying again later)
-#         session['schedule_id'] = sched_id
-
-#         # Fetch available seats for the selected flight
-#         seat_query = text("SELECT seat_num, price, seat_type FROM Seats WHERE Schedule_id = :sched_id AND status = 'available'")
-#         available_seats = db.session.execute(seat_query, {'sched_id': sched_id}).fetchall()
-        
-#         passengers = session.get("passengers", [])  # Use the correct key
-
-#         return render_template('select_seats.html', available_seats=available_seats, num_passengers=session["num_passengers"], passengers = passengers)
-    
-#     # Handle POST request for seat selection (Store in session, NOT database)
-#     if request.method == 'POST':
-#         selected_seats = []
-#         for i in range(session["num_passengers"]):
-#             seat = request.form.get(f"seat_{i}")  # Fetch seat for each passenger
-#             if seat:
-#                 selected_seats.append(seat)
-
-#         session['selected_seats'] = selected_seats  # Store in session
-
-#         print("Selected seats:", selected_seats)  # Debugging output
-
-#         return redirect(url_for('select_seats'))  # Redirect to payment (or confirmation)
-    
-#     return render_template('select_seats.html')
-
-# @app.route('/select_seats', methods=['GET', 'POST'])
-# @login_required
-# def select_seats():
-#     if request.method == 'GET':
-#         if 'selected_route_id' not in session:
-#             return redirect(url_for('dashboard'))
-        
-#         selected_route_id = session['selected_route_id']
-#         flight_info = session['flight_route_info'][selected_route_id]
-        
-#         available_seats = {}
-        
-#         for flight in flight_info:
-#             sched_id = db.session.execute(text("SELECT Schedule_id FROM Schedule WHERE Flight_num = :f_id"), {'f_id': flight[1]}).fetchone()[0]
-#             seat_query = text("SELECT seat_num, price, seat_type FROM Seats WHERE Schedule_id = :sched_id AND status = 'available'")
-#             available_seats[flight[1]] = db.session.execute(seat_query, {'sched_id': sched_id}).fetchall()
-        
-#         return render_template('select_seats.html', available_seats=available_seats, num_passengers=session["num_passengers"], flight_info=flight_info, passengers=session['passengers'])
-    
-#     if request.method == 'POST':
-#         selected_seats = {}
-        
-#         for flight in session['flight_route_info'][session['selected_route_id']]:
-#             flight_num = flight[1]
-#             selected_seats[flight_num] = []
-            
-#             for i in range(session["num_passengers"]):
-#                 seat = request.form.get(f"seat_{flight_num}_{i}")
-#                 if seat:
-#                     selected_seats[flight_num].append(seat)
-        
-#         session['selected_seats'] = selected_seats
-        
-#         print("Selected seats:", selected_seats)
-        
-#         return redirect(url_for('payments'))  # Implement payment route later
-        
-#     return render_template('select_seats.html', available_seats=available_seats, num_passengers=session["num_passengers"], passengers=session['passengers'], flight_info=flight_info)
 
 @app.route('/select_seats', methods=['GET', 'POST'])
 @login_required

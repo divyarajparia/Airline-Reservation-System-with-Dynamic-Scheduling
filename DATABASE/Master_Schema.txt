@@ -84,11 +84,11 @@ CREATE TABLE Transaction_Log (
 );
 
 -- Booking Table
-CREATE TABLE Booking (
+CREATE TABLE Bookings (
     PNR VARCHAR(10),
     user_id INT,
     transaction_id INT,
-    status ENUM('Pending', 'Confirmed', 'Cancelled') DEFAULT 'Pending',
+    status_of_booking ENUM('Pending', 'Confirmed', 'Cancelled') DEFAULT 'Pending',
     PRIMARY KEY (PNR, user_id),
     FOREIGN KEY (PNR) REFERENCES Trip_data(PNR) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES User_info(user_id) ON DELETE CASCADE,
