@@ -284,22 +284,6 @@ def book_flight():
             flash("Passenger information saved!", "success")
             return redirect(url_for('select_seats'))
 
-
-
-    # have to work on this
-    # if request.method == 'POST':
-    #     passengers = []
-    #     for i in range(session["num_passengers"]):
-    #         pax = {
-    #             'name': request.form.get(f'name_{i}'),
-    #             'phone_number': request.form.get(f'phone_number_{i}'),
-    #             'email': request.form.get(f'email_{i}'),
-    #             'ssn': request.form.get(f'ssn_{i}')
-    #         }
-    #         passengers.append(pax)
-    #     # print(passengers)
-
-
     return render_template('book_flight.html', selected_route = session['flight_route_info'][session["selected_route_id"]], num_passengers = session["num_passengers"])
 
 # @app.route('/select_seats', methods=['GET', 'POST'])
