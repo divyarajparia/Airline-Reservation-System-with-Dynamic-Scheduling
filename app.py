@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from sqlalchemy import text
 from flask import flash
 import random
+from datetime import datetime
 from datetime import datetime, date, time, timedelta
 
 import pymysql
@@ -201,6 +202,23 @@ def cancel_booking(pnr):
     return redirect(url_for('previous_bookings'))
 
 
+def dynamic_pricing(base_price, travel_date):
+    current_date = datetime.now().date()
+    travel_date = datetime.strptime(travel_date, "%Y-%m-%d").date()
+    days_to_travel = (travel_date - current_date).days
+
+    if days_to_travel >= 30:
+        price =  base_price * 0.85
+    elif days_to_travel >= 15:
+        price = base_price * 0.9
+    elif days_to_travel >= 7:
+        price =  base_price * 1.0
+    else:
+        price = base_price * 1.2
+
+    return price
+
+
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required
 def dashboard():
@@ -252,13 +270,13 @@ def dashboard():
                     res = db.session.execute(sched_query, {'sched_id': sched_id})
                     res = res.fetchall()[0]
                     schedule_id, flight_num, src_airport, dst_airport, dept_time, arrival_time, base_price = res
-                    dept_time, arrival_time, base_price = str(dept_time), str(arrival_time), float(base_price)
+                    dept_time, arrival_time, base_price = str(dept_time), str(arrival_time), dynamic_pricing(float(base_price), travel_date)
 
                     res = db.session.execute(flight_query, {'f_id': flight_num})
                     aircraft_type, airline_name = res.fetchall()[0]
 
-                    src_name = db.session.execute(airport_query, {'IATA': src_IATA}).fetchall()[0][0]
-                    dst_name = db.session.execute(airport_query, {'IATA': dst_IATA}).fetchall()[0][0]
+                    src_name = db.session.execute(airport_query, {'IATA': src_airport}).fetchall()[0][0]
+                    dst_name = db.session.execute(airport_query, {'IATA': dst_airport}).fetchall()[0][0]
 
                     temp = [schedule_id, flight_num, aircraft_type, airline_name ,src_airport, dst_airport, dept_time, arrival_time, base_price, src_name, dst_name]
                     route_info.append(temp)

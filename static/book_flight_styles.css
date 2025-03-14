@@ -26,7 +26,7 @@ header .nav-buttons {
 
 header .nav-buttons button {
     background-color: white;
-    color: #007BFF;
+    color: #098bed;
     border: none;
     padding: 10px 20px;
     cursor: pointer;
@@ -57,16 +57,6 @@ header .nav-buttons button:hover {
     margin-bottom: 1.5rem;
 }
 
-.route-box {
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    background: #ffffff;
-    display: flex;
-    flex-wrap: nowrap;
-    min-width: 300px;
-}
-
 .flight-info {
     display: flex;
     flex-direction: column;
@@ -74,6 +64,7 @@ header .nav-buttons button:hover {
     padding: 1.5rem;
     border-right: 1px solid #ddd;
     flex: 1;
+    background: linear-gradient(45deg, hsl(55, 59%, 85%), #ffecb3);
 }
 
 .flight-info:last-child {
@@ -95,9 +86,18 @@ header .nav-buttons button:hover {
 }
 
 
+.route-box {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    display: flex;
+    flex-wrap: nowrap;
+    min-width: 300px;
+}
 
 .passenger-info-container {
-    max-width: 500px;
+    max-width: 1000px; /* Increased width for better spacing */
     margin: 40px auto;
     background: white;
     border-radius: 24px;
@@ -109,33 +109,43 @@ header .nav-buttons button:hover {
 }
 
 .passenger-form {
-    background: #f9f9f9;
+    background: linear-gradient(45deg, hsl(55, 59%, 85%), #ffecb3);;
     padding: 20px;
     border-radius: 16px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.passenger-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-
-.passenger-form input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin-bottom: 10px;
 }
 
 .passenger-form h3 {
     color: #007BFF;
 }
 
-.passenger-form button {
-    margin-top: 20px;
+.form-row {
+    display: flex;
+    gap: 40px; /* Increased gap for better spacing */
+    flex-wrap: wrap; /* Allows wrapping on small screens */
 }
+
+.form-group {
+    flex: 1;
+    min-width: 200px; /* Increased min-width for better alignment */
+    box-sizing: border-box; /* Ensure padding is included in width */
+    padding-right: 10px; /* Add padding to avoid touching boundary */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-sizing: border-box; /* Ensure input doesn't overflow */
+}
+
 
 button {
     background-color: #007BFF;
@@ -145,6 +155,9 @@ button {
     cursor: pointer;
     border-radius: 5px;
     font-size: 16px;
+    display: block ;
+    margin: 0 auto;
+    margin-bottom: 10px;
 }
 
 button:hover {

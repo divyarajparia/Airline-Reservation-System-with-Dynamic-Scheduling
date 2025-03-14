@@ -53,37 +53,44 @@ h1 {
     border-radius: 10px;
 }
 
-.input-box {
+/* .input-box {
     position: relative;
     margin-bottom: 20px;
-}
+} */
 
 .input-box input {
     width: 90%;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    display: block;
+    margin: 0 auto;
 }
 
 .input-box label{
-    padding: 10px;
-    margin: 10px;
+    padding: 5px;
+    margin: 5px 0;
+    display: block;
 }
 
 
 .input-container {
-    position: relative; /* Ensure dropdown positions correctly */
+    position: relative; 
     width: 300px; 
     padding: 10px;
     border-radius: 5px;
-}
+} 
 
 .input-container input{
-    position: relative; /* Ensure dropdown positions correctly */
+    position: relative; 
     width: 300px; 
     padding: 10px;
     border-radius: 5px;
+
 }
+
+
+
 
 button {
     background-color: #007BFF;
@@ -93,6 +100,12 @@ button {
     cursor: pointer;
     border-radius: 5px;
     font-size: 16px;
+    display: block ;
+    margin: 0 auto;
+}
+
+button[type="submit"] {
+    margin-top: 10px; /* Adjust the value as needed */
 }
 
 button:hover {
@@ -130,7 +143,7 @@ button:hover {
 /* Ensure the dropdown aligns with the input box */
 .dropdown {
     position: absolute;
-    width: 100%; /* Match input width */
+    width: 300px; /* Set a fixed width for the dropdown */
     max-height: 150px; /* Limit visible options (5 items ~30px each) */
     overflow-y: auto; /* Scroll if too many options */
     border: 1px solid #ccc;
@@ -164,6 +177,7 @@ button:hover {
     border-radius: 24px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     cursor: pointer;
+    background: linear-gradient(45deg, hsl(55, 59%, 85%), #ffecb3);
 }
 
 
