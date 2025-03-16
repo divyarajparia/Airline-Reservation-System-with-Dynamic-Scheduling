@@ -33,16 +33,25 @@
                 <p>Seat: <strong>{{ seat }}</strong></p>
             </div>
             <div class="right">
-                <p>Price: <strong>${{ price }}</strong></p>
+                <p>Seat Price: <strong>${{ price }}</strong></p>
             </div>
         </div>
         {% endfor %}
+    </section>
+
+    <!-- Travel Cost Section -->
+    <section>
+        <h2>Travel Cost</h2>
+        <p><strong>Base Price for Air Travel per Passenger:</strong> ${{ base_price }}</p>
+        <p><strong>Number of Passengers:</strong> {{ num_passengers }}</p>
+        <p><strong>Total Travel Cost:</strong> ${{ num_passengers * base_price }}</p>
     </section>
 
     <h2 class="total-price">Total Price: ${{ total_price }}</h2>
 
     <form method="POST">
         <button type="submit">Confirm Payment</button>
+        <button type="button" onclick="window.location.href='{{ url_for('dashboard') }}'">Cancel Payment</button>
     </form>
 </body>
 </html>

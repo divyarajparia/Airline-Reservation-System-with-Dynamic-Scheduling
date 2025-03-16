@@ -40,6 +40,14 @@
             {% endfor %}
         </section>
 
+        <!-- Travel Cost Section -->
+        <section>
+            <h2>Travel Cost</h2>
+            <p><strong>Base Price for Air Travel per Passenger:</strong> ${{ base_price }}</p>
+            <p><strong>Number of Passengers:</strong> {{ num_passengers }}</p>
+            <p><strong>Total Travel Cost:</strong> ${{ num_passengers * base_price }}</p>
+        </section>
+
         <h2 class="total-price">Total Amount: ${{ total_price }}</h2>
 
         <button onclick="window.print()">Print Receipt</button>
