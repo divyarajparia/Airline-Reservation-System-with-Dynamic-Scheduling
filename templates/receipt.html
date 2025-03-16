@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='receipt_style.css') }}">
 </head>
 <body>
+    <header>
+        <div class="logo">Payment Receipt </div>
+        <div class="nav-buttons">
+            <button onclick="window.location.href='{{ url_for('previous_bookings') }}'">See Bookings</button>
+            <button onclick="window.location.href='{{ url_for('dashboard') }}'">Book Another trip</button>
+        </div>
+    </header>
+
     <div class="receipt-container">
         <h1>Flight Payment Receipt</h1>
 
@@ -41,11 +49,41 @@
         </section>
 
         <!-- Travel Cost Section -->
-        <section>
+        <!-- <section>
             <h2>Travel Cost</h2>
             <p><strong>Base Price for Air Travel per Passenger:</strong> ${{ base_price }}</p>
             <p><strong>Number of Passengers:</strong> {{ num_passengers }}</p>
             <p><strong>Total Travel Cost:</strong> ${{ num_passengers * base_price }}</p>
+        </section> -->
+
+        <section class="receipt">
+            <h2>Travel Cost Summary</h2>
+            <table>
+                <tr>
+                    <td>Base Price per Passenger:</td>
+                    <td>${{ base_price }}</td>
+                </tr>
+                <tr>
+                    <td>Number of Passengers:</td>
+                    <td>{{ num_passengers }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Total Base Price:</strong></td>
+                    <td><strong>${{ num_passengers * base_price }}</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Total Seat Price:</strong></td>
+                    <td><strong>${{ total_seat_price }}</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Platform Charges and Taxes:</strong></td>
+                    <td><strong>${{ platform_fee }}</strong></td>
+                </tr>
+                <tr>
+                    <td><strong>Total Price (incl. taxes & fees):</strong></td>
+                    <td><strong>${{ total_price }}</strong></td>
+                </tr>
+            </table>
         </section>
 
         <h2 class="total-price">Total Amount: ${{ total_price }}</h2>
@@ -57,8 +95,8 @@
         // Auto-fill the date
         document.getElementById("receipt-date").textContent = new Date().toLocaleDateString();
     </script>
-    <div style="text-align: center; margin-top: 20px;">
+    <!-- <div style="text-align: center; margin-top: 20px;">
         <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
-    </div>    
+    </div>     -->
 </body>
 </html>

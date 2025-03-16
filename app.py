@@ -372,12 +372,15 @@ def payments():
         
         selected_seats = session['selected_seats']
         flight_info = session['flight_route_info'][session['selected_route_id']]
-        total_price=0
+
+        total_price = 0
         base_price = 0
-        seat_price_total = 0
+        total_seat_price = 0
+        total_base_price = 0
+
         for flight_leg in flight_info:
             base_price += float(flight_leg[8])
-        total_price += base_price * session['num_passengers']
+        total_base_price += base_price * session['num_passengers']
 
 
         print("Selected seats: ", selected_seats)
@@ -410,23 +413,31 @@ def payments():
 
                 
                 if seat_price:
-                    total_price += float(seat_price[0])
-                    seat_price_total += float(seat_price[0])
+                    total_seat_price += float(seat_price[0])
                     seat_details.append((schd_id,seat,seat_price[0],flight_number[0], name))
                     if global_counter == 1:
-                        user_details.append((ssn,name,phone,mail))       
-            
-        session['total_price'] = total_price
+                        user_details.append((ssn,name,phone,mail))   
+
+        platform_fee = 60
+        total_price = total_base_price + total_seat_price + platform_fee
+
         session['seat_details'] = seat_details
         session['user_details'] = user_details
+
+        session['base_price'] = base_price
+        session['total_base_price'] = total_base_price
+        session['total_seat_price'] = total_seat_price
+        session['platform_fee'] = platform_fee
+        session['total_price'] = total_price
+
+
         print("Seat details: ",select_seats)
         print('Number of passangers: ', session['num_passengers'])
         print("flight info: ", flight_info)
         print("base Price info: ", base_price)
 
-        session['base_price'] = base_price
 
-        return render_template('payments.html', total_price=total_price, seat_details=seat_details, user_details=user_details, base_price=base_price, seat_price_total=seat_price_total, num_passengers=session['num_passengers'])
+        return render_template('payments.html', total_price=total_price,  base_price=base_price, total_base_price=total_base_price, total_seat_price=total_seat_price, platform_fee=platform_fee, num_passengers=session['num_passengers'], seat_details=seat_details, user_details=user_details,)
     else:
         selected_seats = session['selected_seats']
         total_price = session.get('total_price', 0)
@@ -478,7 +489,7 @@ def payments():
                 print("User Details: " ,user_details)
                 receipt_number = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))  # Generates a 10-character receipt number
 
-                return render_template('receipt.html', total_price=total_price, seat_details=seat_details, user_details=user_details, pnr=pnr, receipt_number=receipt_number, base_price=session['base_price'], num_passengers=session['num_passengers'])
+                return render_template('receipt.html', total_price=session["total_price"],  base_price=session["base_price"], total_base_price=session["total_base_price"], total_seat_price=session["total_seat_price"], platform_fee=session["platform_fee"], seat_details=seat_details, user_details=user_details, pnr=pnr, receipt_number=receipt_number,  num_passengers=session['num_passengers'])
 
         except Exception as e:
             db.session.rollback()

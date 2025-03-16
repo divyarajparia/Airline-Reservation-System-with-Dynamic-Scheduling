@@ -2,10 +2,45 @@
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
-    padding: 20px;
+    padding: 0px;
     background-color: #ffffff; /* White background */
     color: #0d47a1; /* Deep blue text */
     text-align: center;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007BFF;
+    padding: 10px 20px;
+    color: white;
+    height: 50px;
+}
+
+header .logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+header .nav-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+header .nav-buttons button {
+    background-color: white;
+    color: #007BFF;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+header .nav-buttons button:hover {
+    background-color: #0056b3;
+    color: white;
 }
 
 /* Header */
@@ -26,7 +61,7 @@ h2 {
 
 /* Passenger Details - Card Format */
 .passenger-card {
-    background: #e3f2fd; /* Light Blue */
+    background: linear-gradient(45deg, hsl(55, 59%, 85%), #ffecb3); 
     color: #0d47a1;
     padding: 15px;
     margin: 15px auto;
@@ -50,7 +85,7 @@ h2 {
 
 /* Boarding Pass Style */
 .boarding-pass {
-    background: #e3f2fd; /* Light Blue */
+    background: linear-gradient(45deg, hsl(55, 59%, 85%), #ffecb3); /* Light Blue */
     padding: 15px;
     max-width: 500px;
     margin: 15px auto;
@@ -102,9 +137,47 @@ button {
     cursor: pointer;
     transition: 0.3s ease-in-out;
     box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+    margin: 20px;
 }
 
 button:hover {
     background-color: #0d47a1; /* Darker Blue */
     transform: scale(1.05);
+}
+
+
+.receipt {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+.receipt h2 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+.receipt table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.receipt td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+.receipt tr:last-child td {
+    border-bottom: none;
+}
+.receipt td:first-child {
+    text-align: left;
+}
+.receipt td:last-child {
+    text-align: right;
+}
+.receipt tr:last-child td {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #d9534f;
 }

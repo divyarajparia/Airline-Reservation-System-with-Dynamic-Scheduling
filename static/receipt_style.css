@@ -1,19 +1,54 @@
-/* General Styles */
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;
-    padding: 20px;
+    padding: 0;
     background-color: #ffffff; /* White background */
     color: #0d47a1; /* Deep blue text */
     text-align: center;
 }
 
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #007BFF;
+    padding: 10px 20px;
+    color: white;
+    height: 50px;
+}
+
+header .logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+header .nav-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+header .nav-buttons button {
+    background-color: white;
+    color: #007BFF;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+header .nav-buttons button:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+
 /* Receipt Container */
 .receipt-container {
-    background: #e3f2fd; /* Light Blue */
+    background: linear-gradient(45deg, hsl(55, 59%, 85%), #e8af03); /* Light Blue */
     padding: 20px;
     max-width: 600px;
-    margin: 0 auto;
+    margin: 20px auto;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     text-align: left;
@@ -32,7 +67,7 @@ h1 {
     text-align: center;
     font-size: 1rem;
     color: #333;
-    margin-bottom: 20px;
+    margin: 20px, auto;
 }
 
 /* Sections */
@@ -41,7 +76,7 @@ h2 {
     border-bottom: 2px solid #1565c0;
     display: inline-block;
     padding-bottom: 5px;
-    margin-top: 20px;
+    margin: 20px, auto;
 }
 
 /* Passenger Info */
@@ -49,15 +84,18 @@ h2 {
 .flight-info {
     background: #ffffff;
     padding: 15px;
-    margin: 10px 0;
+    margin: 10px auto;
     border-radius: 8px;
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    align-items: center;
 }
 
 .passenger-info p,
 .flight-info p {
     margin: 5px 0;
     font-size: 1rem;
+    
 }
 
 /* Total Price */
@@ -85,4 +123,41 @@ button {
 button:hover {
     background-color: #0d47a1;
     transform: scale(1.05);
+}
+
+.receipt {
+    max-width: 400px;
+    background: #ffffff;
+    margin: 20px auto;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+}
+.receipt h2 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+.receipt table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.receipt td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+.receipt tr:last-child td {
+    border-bottom: none;
+}
+.receipt td:first-child {
+    text-align: left;
+}
+.receipt td:last-child {
+    text-align: right;
+}
+.receipt tr:last-child td {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #d9534f;
 }
