@@ -32,30 +32,6 @@ CREATE TABLE Trip(
 
 DELIMITER //
 
-CREATE PROCEDURE ConfirmPayment(
-    IN user_id INT,
-    IN total_price DECIMAL(10,2),
-    IN PNR char(6)
-)
-BEGIN
-    DECLARE transaction_id INT;
-    
-    -- Insert into transactions table
-    INSERT INTO Transactions (user_id, price, time_stamp, transaction_type)
-    VALUES (user_id, total_price, NOW(), 'payment');
-    
-    -- Get the last inserted transaction_id
-    SET transaction_id = LAST_INSERT_ID();
-    
-    -- Insert into Bookings table
-    INSERT INTO Bookings
-    VALUES (PNR, user_id, transaction_id, 'payment');
-END //
-
-DELIMITER ;
-
-DELIMITER //
-
 CREATE PROCEDURE ConfirmSeat(
     IN user_id INT,
     IN sch_id INT,
@@ -64,13 +40,19 @@ CREATE PROCEDURE ConfirmSeat(
     IN PNR char(6),
     IN p_name varchar(100),
     IN p_phone varchar(15),
-    IN p_email varchar(100)
+    IN p_email varchar(100),
+    IN no_of_passangers INT
 )
 BEGIN
 	-- Insert seat status in the Seats Table
     UPDATE Seats
     SET status = 'booked'
     WHERE Schedule_id = sch_id AND seat_num = seat_no;
+    
+    -- Update the schedule table
+    UPDATE Schedule
+    SET seats = seats - no_of_passangers
+    WHERE Schedule_id = sch_id;
     
     -- Insert into trip table
 	INSERT INTO Trip

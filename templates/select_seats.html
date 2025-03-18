@@ -46,6 +46,17 @@
     </header>
 
     <h1>Select Seats</h1>
+    
+    <!--Error message-->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+
     <form method="POST">
     {% for flight in flight_info %}
     <div class="seats-container">

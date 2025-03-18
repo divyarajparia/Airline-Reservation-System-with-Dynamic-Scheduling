@@ -349,8 +349,11 @@ def select_seats():
             selected_seats[schedule_id] = []
             for i in range(session["num_passengers"]):
                 seat = request.form.get(f"seat_{schedule_id}_{i}")
-                if seat:
+                if seat and seat not in selected_seats[schedule_id]:
                     selected_seats[schedule_id].append(seat)
+                else:
+                    flash(f"Error: Seat {seat} is already taken or invalid. Please choose another seat.", "error")
+                    return redirect(url_for('select_seats'))
         
         session['selected_seats'] = selected_seats
         print("Selected seats:", selected_seats)
@@ -458,7 +461,7 @@ def payments():
                         name = session['passengers'][counter]['name']
                         phone = session['passengers'][counter]['phone_number']
                         mail = session['passengers'][counter]['email']
-                        conn.execute(text("""CALL ConfirmSeat(:user_id, :schedule_id, :seat_num, :ssn, :pnr, :name, :phone, :email)"""), {
+                        conn.execute(text("""CALL ConfirmSeat(:user_id, :schedule_id, :seat_num, :ssn, :pnr, :name, :phone, :email, :no_of_passangers)"""), {
                             'user_id': current_user.user_id,
                             'schedule_id': schd_id,
                             'seat_num': seat,
@@ -466,7 +469,8 @@ def payments():
                             'pnr': pnr,
                             'name': name,
                             'phone': phone,
-                            'email': mail
+                            'email': mail,
+                            'no_of_passangers': session['num_passengers']
                         })
                         conn.commit()
                         counter+=1
