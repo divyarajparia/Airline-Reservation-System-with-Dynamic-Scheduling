@@ -32,6 +32,30 @@ CREATE TABLE Trip(
 
 DELIMITER //
 
+CREATE PROCEDURE ConfirmPayment(
+    IN user_id INT,
+    IN total_price DECIMAL(10,2),
+    IN PNR char(6)
+)
+BEGIN
+    DECLARE transaction_id INT;
+    
+    -- Insert into transactions table
+    INSERT INTO Transactions (user_id, price, time_stamp, transaction_type)
+    VALUES (user_id, total_price, NOW(), 'payment');
+    
+    -- Get the last inserted transaction_id
+    SET transaction_id = LAST_INSERT_ID();
+    
+    -- Insert into Bookings table
+    INSERT INTO Bookings
+    VALUES (PNR, user_id, transaction_id, 'payment');
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
 CREATE PROCEDURE ConfirmSeat(
     IN user_id INT,
     IN sch_id INT,
@@ -44,6 +68,23 @@ CREATE PROCEDURE ConfirmSeat(
     IN no_of_passangers INT
 )
 BEGIN
+	DECLARE seat_status VARCHAR(10);
+	
+    -- Start transaction to ensure no double bookings
+    START TRANSACTION;
+        
+	-- Lock the seat row for update to prevent race conditions
+    SELECT status INTO seat_status 
+    FROM Seats 
+    WHERE Schedule_id = sch_id AND seat_num = seat_no
+    FOR UPDATE;
+	
+    -- Check if the seat is already booked
+    IF seat_status = 'booked' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Seat is already booked!';
+    END IF;
+
 	-- Insert seat status in the Seats Table
     UPDATE Seats
     SET status = 'booked'
@@ -66,6 +107,27 @@ BEGIN
         FROM Traveler_info
         WHERE social_security_num = SSN
     );
+	
+    -- Commit transaction if everything is successful
+    COMMIT;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE CheckPNR(
+    IN schd_id INT,
+    IN pnr_id CHAR(6),
+    OUT present INT
+)
+BEGIN
+    SET present = 0;
+
+    IF EXISTS (SELECT 1 FROM Bookings WHERE PNR = pnr_id) THEN
+        SET present = 1;
+    END IF;
+
 END //
 
 DELIMITER ;
