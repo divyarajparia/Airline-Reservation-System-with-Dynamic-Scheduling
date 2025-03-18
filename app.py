@@ -13,6 +13,7 @@ from flask import flash
 import random
 from datetime import datetime
 from datetime import datetime, date, time, timedelta
+from sqlalchemy.exc import SQLAlchemyError
 
 import pymysql
 pymysql.install_as_MySQLdb()
@@ -453,7 +454,7 @@ def payments():
         print("Passangers info : ",session['passengers'])
         
         try:
-            with db.engine.connect() as conn:
+            with db.engine.begin() as conn:
                 for schd_id, seats in selected_seats.items():
                     counter = 0
                     for seat in seats:
@@ -461,6 +462,7 @@ def payments():
                         name = session['passengers'][counter]['name']
                         phone = session['passengers'][counter]['phone_number']
                         mail = session['passengers'][counter]['email']
+                        # try:                        
                         conn.execute(text("""CALL ConfirmSeat(:user_id, :schedule_id, :seat_num, :ssn, :pnr, :name, :phone, :email, :no_of_passangers)"""), {
                             'user_id': current_user.user_id,
                             'schedule_id': schd_id,
@@ -472,7 +474,11 @@ def payments():
                             'email': mail,
                             'no_of_passangers': session['num_passengers']
                         })
-                        conn.commit()
+                        # except SQLAlchemyError as e:
+                        #     print(f"Error: {str(e)}")  # Log error
+                        #     conn.rollback()  # Rollback everything if any error occurs
+                        #     raise Exception("Failed to confirm seats. All changes rolled back.")
+                        # conn.commit()
                         counter+=1
                 
                 conn.execute(text("""CALL ConfirmPayment(:user_id, :total_price, :pnr)"""), {
@@ -480,7 +486,7 @@ def payments():
                     'total_price': total_price,
                     'pnr': pnr
                 })
-                conn.commit()
+                # conn.commit()
                 
                 flash("Payment successful. Your booking is confirmed.", "success")
                 # seat_details = [(schd_id, seat, price, flight_num, name, pnr) for (schd_id, seat, price, flight_num, name) in seat_details]
@@ -495,8 +501,13 @@ def payments():
 
                 return render_template('receipt.html', total_price=session["total_price"],  base_price=session["base_price"], total_base_price=session["total_base_price"], total_seat_price=session["total_seat_price"], platform_fee=session["platform_fee"], seat_details=seat_details, user_details=user_details, pnr=pnr, receipt_number=receipt_number,  num_passengers=session['num_passengers'])
 
+        except SQLAlchemyError as e:
+            print(f"Database Error: {str(e)}")
+            flash("Payment failed. Please try again later.", "error")
+            return redirect(url_for('dashboard'))
+
         except Exception as e:
-            db.session.rollback()
+            # db.session.rollback()
             print("Failed:", str(e))
             flash(f"Payment failed: {str(e)}", "danger")
             return redirect(url_for('dashboard'))
