@@ -450,6 +450,7 @@ def payments():
         print("selected seats: ",selected_seats)
 
         pnr = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
+        schd_id = selected_seats.items()[1]
         while True:
             pnr = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
             with db.engine.connect() as conn:
