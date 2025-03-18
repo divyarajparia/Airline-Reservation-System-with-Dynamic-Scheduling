@@ -48,13 +48,25 @@
     <h1>Select Seats</h1>
     
     <!--Error message-->
-    {% with messages = get_flashed_messages(with_categories=true) %}
+    <!-- {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
                 <div class="alert alert-{{ category }}">{{ message }}</div>
             {% endfor %}
         {% endif %}
-    {% endwith %}
+    {% endwith %} -->
+
+    <script>
+        window.onload = function () {
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        alert("{{ message }}");  // Show message as an alert
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        };
+    </script>
 
 
     <form method="POST">
