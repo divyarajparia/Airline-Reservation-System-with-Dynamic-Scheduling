@@ -102,30 +102,16 @@
     {% endwith %}
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            // Get all flash message elements
-            const flashMessages = document.querySelectorAll("[data-flash-message]");
-            
-            flashMessages.forEach(msg => {
-                const category = msg.getAttribute("data-category"); // success, error, danger, etc.
-                const message = msg.getAttribute("data-message");
-                
-                // Determine icon type based on category
-                let iconType = "info"; 
-                if (category === "success") iconType = "success";
-                else if (category === "error" || category === "danger") iconType = "error";
-                else if (category === "warning") iconType = "warning";
-                
-                // Display the SweetAlert popup
-                Swal.fire({
-                    icon: iconType,
-                    title: category.charAt(0).toUpperCase() + category.slice(1), // Capitalize first letter
-                    text: message,
-                    confirmButtonText: "OK"
-                });
-            });
-        });
-    </script>    
+        window.onload = function () {
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        alert("{{ message }}");  // Show message as an alert
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        };
+    </script>
   
 </body>
 </html>
