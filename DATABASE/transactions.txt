@@ -61,7 +61,10 @@ CREATE PROCEDURE ConfirmSeat(
     IN sch_id INT,
     IN seat_no VARCHAR(5),
     IN SSN char(20),
-    IN PNR char(6)
+    IN PNR char(6),
+    IN p_name varchar(100),
+    IN p_phone varchar(15),
+    IN p_email varchar(100)
 )
 BEGIN
 	-- Insert seat status in the Seats Table
@@ -72,6 +75,15 @@ BEGIN
     -- Insert into trip table
 	INSERT INTO Trip
     VALUES (SSN, PNR, sch_id, user_id, seat_no, CURDATE(), 'confirmed');
+    
+    -- Insert into the travellers info table
+	INSERT INTO Traveler_info
+    SELECT SSN, p_name, p_phone, p_email
+    WHERE NOT EXISTS(
+		SELECT *
+        FROM Traveler_info
+        WHERE social_security_num = SSN
+    );
 END //
 
 DELIMITER ;
