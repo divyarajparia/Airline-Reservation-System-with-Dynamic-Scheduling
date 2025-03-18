@@ -450,18 +450,19 @@ def payments():
         print("selected seats: ",selected_seats)
 
         pnr = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
-        schd_id = selected_seats.items()[1]
-        while True:
-            pnr = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
-            with db.engine.connect() as conn:
-                conn.execute(
-                    text("CALL CheckPNR(:schedule_id, :pnr, @is_present)"),
-                    {'schedule_id': schd_id, 'pnr': pnr}
-                )
-                present = conn.execute(text("SELECT @is_present")).scalar()
 
-            if present == 0:
-                break
+        for schd_id, seats in selected_seats.items():
+            while True:
+                pnr = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
+                with db.engine.connect() as conn:
+                    conn.execute(
+                        text("CALL CheckPNR(:schedule_id, :pnr, @is_present)"),
+                        {'schedule_id': schd_id, 'pnr': pnr}
+                    )
+                    present = conn.execute(text("SELECT @is_present")).scalar()
+
+                if present == 0:
+                    break
 
         print("Passangers info : ",session['passengers'])
         
