@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Previous Bookings</title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='previous_bookings_style.css') }}">
-</head>
-<body>
-
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Previous Bookings</title>
+        
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='previous_bookings_style.css') }}">
+    </head>
+    <body>
+        
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary back-to-dashboard">Back to Dashboard</a>
     <div class="container mt-5">
         <!-- User Info -->
         <div class="card user-info">
@@ -25,9 +26,20 @@
 
         <!-- Display Previous Bookings -->
         {% if bookings_by_pnr %}
-    {% for pnr, flights in bookings_by_pnr.items() %}
+        {% for pnr, flights in bookings_by_pnr.items() %}
         <div class="booking">
-            <div class="card-header">PNR: {{ pnr }}</div>
+            <div class="card-header">
+                PNR: {{ pnr }}
+                {% if flights[0].status == 'cancelled' %}
+                    <span class="status-label cancelled">Cancelled</span>
+                {% elif flights[0].can_cancel %}
+                    <form action="{{ url_for('cancel_booking', pnr=pnr) }}" method="POST" class="cancel-form">
+                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to cancel this booking?')">CANCEL BOOKING</button>
+                    </form>
+                {% else %}
+                    <span class="status-label cannot-cancel">Cannot Cancel</span>
+                {% endif %}
+            </div>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -40,7 +52,6 @@
                             <th>Departure Date</th>
                             <th>Departure Time</th>
                             <th>Status</th>
-                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -54,18 +65,6 @@
                                 <td>{{ flight.dept_date }}</td>
                                 <td>{{ flight.dept_time }}</td>
                                 <td>{{ flight.status }}</td>
-                                <td>
-                                    {% if flight.status == 'cancelled' %}
-                                        <span class="text-muted">Cancelled</span>
-                                    {% elif flight.can_cancel %}
-                                        <form action="{{ url_for('cancel_booking', pnr=pnr) }}" method="POST">
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to cancel this booking?')">Cancel Booking</button>
-                                        </form>
-                                    {% else %}
-                                        <span class="text-muted">Cannot Cancel</span>
-                                    {% endif %}
-                                </td>
-                                
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -78,11 +77,6 @@
 {% endif %}
 
 
-        <!-- Back to Dashboard Button -->
-        <div class="text-center mt-4">
-            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
-        </div>
-    </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

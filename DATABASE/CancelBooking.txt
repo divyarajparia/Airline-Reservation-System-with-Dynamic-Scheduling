@@ -1,0 +1,66 @@
+DELIMITER $$
+
+CREATE PROCEDURE CancelBooking(IN p_pnr VARCHAR(20), IN p_user_id INT)
+BEGIN
+    DECLARE v_transaction_id INT;
+    DECLARE v_refund_amount DECIMAL(10, 2);
+    DECLARE v_num_travelers INT;
+    DECLARE v_distinct_flights INT;
+
+    -- Start transaction
+    START TRANSACTION;
+
+    -- Update Trip status to 'cancelled'
+    UPDATE Trip 
+    SET status = 'cancelled' 
+    WHERE PNR = p_pnr AND booked_by = p_user_id;
+
+    -- Update Seats status to 'available'
+    UPDATE Seats s
+    JOIN Trip t ON s.Schedule_id = t.Schedule_id AND s.seat_num = t.seat_num
+    SET s.status = 'available'
+    WHERE t.PNR = p_pnr AND t.booked_by = p_user_id;
+
+    -- Get transaction ID and calculate refund amount
+    SELECT t.transaction_id, -t.price INTO v_transaction_id, v_refund_amount
+    FROM Bookings b
+    JOIN Transactions t ON b.transaction_id = t.transaction_id
+    WHERE b.PNR = p_pnr AND b.user_id = p_user_id;
+
+    -- Create a refund transaction
+    INSERT INTO Transactions (user_id, price, transaction_type)
+    VALUES (p_user_id, v_refund_amount, 'refund');
+
+    -- Get the newly created transaction ID for the refund
+    SET v_transaction_id = LAST_INSERT_ID();
+
+    -- Update Booking table
+    UPDATE Bookings
+    SET status_of_booking = 'refund', transaction_id = v_transaction_id
+    WHERE PNR = p_pnr AND user_id = p_user_id;
+    
+    -- Get the number of distinct flights
+    SELECT COUNT(DISTINCT Schedule_id) INTO v_distinct_flights
+    FROM Trip
+    WHERE PNR = p_pnr AND booked_by = p_user_id;
+
+    -- Calculate the number of passengers
+    SELECT COUNT(*) / v_distinct_flights INTO v_num_travelers
+    FROM Trip
+    WHERE PNR = p_pnr AND booked_by = p_user_id;
+
+    -- Update Schedule table to increase available seats
+    UPDATE Schedule s
+    JOIN Trip t ON s.Schedule_id = t.Schedule_id
+    SET s.seats = s.seats + v_num_travelers
+    WHERE t.PNR = p_pnr AND t.booked_by = p_user_id;
+
+    -- Commit transaction
+    COMMIT;
+
+    -- Return the transaction ID and refund amount (optional)
+    SELECT v_transaction_id AS transaction_id, v_refund_amount AS refund_amount;
+
+END$$
+
+DELIMITER ;

@@ -475,7 +475,7 @@ def payments():
                         name = session['passengers'][counter]['name']
                         phone = session['passengers'][counter]['phone_number']
                         mail = session['passengers'][counter]['email']
-                        # try:                        
+                        # try:
                         conn.execute(text("""CALL ConfirmSeat(:user_id, :schedule_id, :seat_num, :ssn, :pnr, :name, :phone, :email, :no_of_passangers)"""), {
                             'user_id': current_user.user_id,
                             'schedule_id': schd_id,
@@ -485,7 +485,7 @@ def payments():
                             'name': name,
                             'phone': phone,
                             'email': mail,
-                            'no_of_passangers': session['num_passengers']
+                            'no_of_passangers': 1
                         })
                         # except SQLAlchemyError as e:
                         #     print(f"Error: {str(e)}")  # Log error

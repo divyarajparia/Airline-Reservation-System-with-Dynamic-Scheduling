@@ -1,55 +1,73 @@
 /* General Styling */
 body {
-    background-color: #f8f9fa;
-    padding: 20px;
-    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    padding: 30px;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    line-height: 1.6;
 }
 
 /* User Info Card */
 .user-info {
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
-    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    padding: 30px;
     background-color: white;
-    border-radius: 8px;
+    border-radius: 12px;
+    transition: box-shadow 0.3s ease;
+}
+
+.user-info:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .user-info h2 {
-    margin-bottom: 15px;
-    color: #333;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 24px;
 }
 
 .user-info p {
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-size: 16px;
+    color: #34495e;
 }
 
 /* Booking Card */
 .booking {
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
     background-color: white;
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
+    transition: transform 0.3s ease;
+}
+
+.booking:hover {
+    transform: translateY(-5px);
 }
 
 /* Card Header */
 .card-header {
-    background-color: #007bff;
+    background-color: #3498db;
     color: white;
     font-weight: bold;
     text-transform: uppercase;
-    padding: 15px 20px;
+    padding: 20px 25px;
     font-size: 18px;
+    letter-spacing: 1px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 /* Table Styling */
 .table-responsive {
     overflow-x: auto;
+    padding: 20px;
 }
 
 .table {
-    margin-bottom: 0;
     width: 100%;
     min-width: 800px;
     border-collapse: separate;
@@ -57,20 +75,24 @@ body {
 }
 
 .table thead th {
-    background-color: #e9ecef;
+    background-color: #ecf0f1;
     font-weight: bold;
-    border-bottom: 2px solid #dee2e6;
+    border-bottom: 2px solid #bdc3c7;
     padding: 15px 20px;
+    color: #2c3e50;
+    text-transform: uppercase;
+    font-size: 14px;
 }
 
 .table th, .table td {
-    padding: 15px 20px;
+    padding: 18px 20px;
     vertical-align: middle;
     border-top: none;
 }
 
 .table tbody tr {
     transition: background-color 0.3s ease;
+    border-radius: 8px;
 }
 
 .table tbody tr:nth-child(even) {
@@ -78,26 +100,75 @@ body {
 }
 
 .table tbody tr:hover {
-    background-color: #f1f1f1;
+    background-color: #e8f4fd;
 }
 
 /* Back to Dashboard Button */
 .btn-secondary {
     padding: 12px 24px;
     font-size: 16px;
-    border-radius: 5px;
-    margin-top: 20px;
-    transition: background-color 0.3s ease;
+    border-radius: 8px;
+    margin-top: 30px;
+    transition: all 0.3s ease;
+    background-color: #3498db;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: inline-block;
 }
 
 .btn-secondary:hover {
-    background-color: #5a6268;
+    background-color: #2980b9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* No Bookings Message */
 .no-bookings {
     text-align: center;
-    font-size: 18px;
-    color: #6c757d;
-    margin-top: 30px;
+    font-size: 20px;
+    color: #7f8c8d;
+    margin-top: 40px;
+    padding: 30px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Cancel Button and Status Labels */
+.btn-danger {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+.status-label {
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* .cancelled {
+    background-color: #e74c3c;
+    color: white;
+} */
+
+.cannot-cancel, .cancelled {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.back-to-dashboard {
+    position: absolute;
+    top: 0px;
+    right: 20px;
 }
