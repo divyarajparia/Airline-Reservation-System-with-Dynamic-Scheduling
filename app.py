@@ -187,6 +187,86 @@ def register():
     
 #     return render_template("previous_bookings.html", bookings_by_pnr=bookings_by_pnr, user_info=user_info)
 
+@app.route('/bookings')
+@login_required
+def bookings():
+    user_query = text("""
+    SELECT first_name, last_name, email
+    FROM User
+    WHERE user_id = :user_id
+    """)
+    
+    user_result = db.session.execute(user_query, {'user_id': current_user.user_id}).fetchone()
+
+    first_name, last_name, email = user_result if user_result else ("N/A", "N/A", "N/A", "N/A")
+
+    user_info = {
+        "first_name": first_name,
+        "last_name": last_name,
+        "email": email,
+    }
+
+    return render_template("bookings.html", user_info=user_info)
+
+# @app.route('/previous_bookings')
+# @login_required
+# def previous_bookings():
+#     user_query = text("""
+#     SELECT first_name, last_name, email
+#     FROM User
+#     WHERE user_id = :user_id
+#     """)
+    
+#     user_result = db.session.execute(user_query, {'user_id': current_user.user_id}).fetchone()
+
+#     first_name, last_name, email = user_result if user_result else ("N/A", "N/A", "N/A")
+
+#     user_info = {"first_name": first_name, "last_name": last_name, "email": email}
+
+#     previous_bookings_query = text("""
+#     SELECT T.PNR, T.Schedule_id, T.seat_num, T.status,
+#     S.Flight_num, S.src_airport, S.dst_airport, S.dept_date, S.dept_time,
+#     TI.name as passenger_name
+#     FROM Trip T
+#     JOIN Schedule S ON T.Schedule_id = S.Schedule_id
+#     JOIN Traveler_info TI ON T.SSN = TI.social_security_num
+#     WHERE T.booked_by = :user_id
+#     ORDER BY T.PNR, T.Schedule_id
+#     """)
+#     previous_bookings = db.session.execute(previous_bookings_query, {'user_id': current_user.user_id}).fetchall()
+
+#     # Group bookings by PNR and check cancellation eligibility
+#     bookings_by_pnr = {}
+#     current_date = datetime.now().date()
+#     for row in previous_bookings:
+#         pnr, schedule_id, seat_num, status, flight_num, src_airport, dst_airport, dept_date, dept_time, passenger_name = row
+#         if pnr not in bookings_by_pnr:
+#             bookings_by_pnr[pnr] = []
+        
+#         dept_time = (datetime.min + dept_time).time()
+#         flight_datetime = datetime.combine(dept_date, dept_time)
+#         can_cancel = (flight_datetime - datetime.now()).total_seconds() > 86400 and status != 'cancelled'
+        
+#         bookings_by_pnr[pnr].append({
+#             "Schedule_id": schedule_id,
+#             "passenger_name": passenger_name,
+#             "seat_num": seat_num,
+#             "Flight_num": flight_num,
+#             "src_airport": src_airport,
+#             "dst_airport": dst_airport,
+#             "dept_date": dept_date,
+#             "dept_time": dept_time,
+#             "can_cancel": can_cancel,
+#             "status": status
+#         })
+
+#     return render_template("previous_bookings.html", bookings_by_pnr=bookings_by_pnr, user_info=user_info)
+
+from datetime import datetime, timedelta
+from flask import render_template
+from flask_login import login_required, current_user
+from sqlalchemy.sql import text
+
 @app.route('/previous_bookings')
 @login_required
 def previous_bookings():
@@ -197,51 +277,142 @@ def previous_bookings():
     """)
     
     user_result = db.session.execute(user_query, {'user_id': current_user.user_id}).fetchone()
-
     first_name, last_name, email = user_result if user_result else ("N/A", "N/A", "N/A")
-
     user_info = {"first_name": first_name, "last_name": last_name, "email": email}
 
-    previous_bookings_query = text("""
+    # Fetch all bookings
+    bookings_query = text("""
     SELECT T.PNR, T.Schedule_id, T.seat_num, T.status,
-    S.Flight_num, S.src_airport, S.dst_airport, S.dept_date, S.dept_time,
-    TI.name as passenger_name
+           S.Flight_num, S.src_airport, S.dst_airport, S.dept_date, S.dept_time, S.arrival_time,
+           TI.name as passenger_name
     FROM Trip T
     JOIN Schedule S ON T.Schedule_id = S.Schedule_id
     JOIN Traveler_info TI ON T.SSN = TI.social_security_num
     WHERE T.booked_by = :user_id
     ORDER BY T.PNR, T.Schedule_id
     """)
-    previous_bookings = db.session.execute(previous_bookings_query, {'user_id': current_user.user_id}).fetchall()
+    bookings = db.session.execute(bookings_query, {'user_id': current_user.user_id}).fetchall()
 
-    # Group bookings by PNR and check cancellation eligibility
-    bookings_by_pnr = {}
-    current_date = datetime.now().date()
-    for row in previous_bookings:
+    # Group previous bookings
+    previous_bookings_by_pnr = {}
+    current_time = datetime.now()
+
+    for row in bookings:
+        pnr, schedule_id, seat_num, status, flight_num, src_airport, dst_airport, dept_date, dept_time, arr_time, passenger_name = row
+        flight_datetime = datetime.combine(dept_date, (datetime.min + dept_time).time())
+        arrival_datetime = datetime.combine(dept_date, (datetime.min + arr_time).time())
+
+        can_give_feedback = current_time > arrival_datetime  # Flight has landed
+
+
+
+        if (flight_datetime - current_time).total_seconds() < 86400:  # < 24 hours
+            if pnr not in previous_bookings_by_pnr:
+                previous_bookings_by_pnr[pnr] = {"flights": [], "earliest_departure": flight_datetime}
+            else:
+                previous_bookings_by_pnr[pnr]["earliest_departure"] = min(previous_bookings_by_pnr[pnr]["earliest_departure"], flight_datetime)
+
+            previous_bookings_by_pnr[pnr]["flights"].append({
+                "Schedule_id": schedule_id,
+                "passenger_name": passenger_name,
+                "seat_num": seat_num,
+                "Flight_num": flight_num,
+                "src_airport": src_airport,
+                "dst_airport": dst_airport,
+                "dept_date": dept_date,
+                "dept_time": dept_time,
+                "status": status,
+                "can_give_feedback": can_give_feedback
+
+            })
+
+    return render_template("previous_bookings.html", bookings_by_pnr=previous_bookings_by_pnr, user_info=user_info)
+
+
+@app.route('/upcoming_flights')
+@login_required
+def upcoming_flights():
+    user_query = text("""
+    SELECT first_name, last_name, email
+    FROM User
+    WHERE user_id = :user_id
+    """)
+    
+    user_result = db.session.execute(user_query, {'user_id': current_user.user_id}).fetchone()
+    first_name, last_name, email = user_result if user_result else ("N/A", "N/A", "N/A")
+    user_info = {"first_name": first_name, "last_name": last_name, "email": email}
+
+    # Fetch all bookings
+    bookings_query = text("""
+    SELECT T.PNR, T.Schedule_id, T.seat_num, T.status,
+           S.Flight_num, S.src_airport, S.dst_airport, S.dept_date, S.dept_time,
+           TI.name as passenger_name
+    FROM Trip T
+    JOIN Schedule S ON T.Schedule_id = S.Schedule_id
+    JOIN Traveler_info TI ON T.SSN = TI.social_security_num
+    WHERE T.booked_by = :user_id
+    ORDER BY T.PNR, T.Schedule_id
+    """)
+    bookings = db.session.execute(bookings_query, {'user_id': current_user.user_id}).fetchall()
+
+    # Group upcoming flights
+    upcoming_flights_by_pnr = {}
+    current_time = datetime.now()
+
+    for row in bookings:
         pnr, schedule_id, seat_num, status, flight_num, src_airport, dst_airport, dept_date, dept_time, passenger_name = row
-        if pnr not in bookings_by_pnr:
-            bookings_by_pnr[pnr] = []
-        
-        dept_time = (datetime.min + dept_time).time()
-        flight_datetime = datetime.combine(dept_date, dept_time)
-        can_cancel = (flight_datetime - datetime.now()).total_seconds() > 86400 and status != 'cancelled'
-        
-        bookings_by_pnr[pnr].append({
-            "Schedule_id": schedule_id,
-            "passenger_name": passenger_name,
-            "seat_num": seat_num,
-            "Flight_num": flight_num,
-            "src_airport": src_airport,
-            "dst_airport": dst_airport,
-            "dept_date": dept_date,
-            "dept_time": dept_time,
-            "can_cancel": can_cancel,
-            "status": status
-        })
-
-    return render_template("previous_bookings.html", bookings_by_pnr=bookings_by_pnr, user_info=user_info)
+        flight_datetime = datetime.combine(dept_date, (datetime.min + dept_time).time())
 
 
+        if (flight_datetime - current_time).total_seconds() > 86400:  # > 24 hours
+            if pnr not in upcoming_flights_by_pnr:
+                upcoming_flights_by_pnr[pnr] = {"flights": [], "earliest_departure": flight_datetime}
+            else:
+                upcoming_flights_by_pnr[pnr]["earliest_departure"] = min(upcoming_flights_by_pnr[pnr]["earliest_departure"], flight_datetime)
+
+            upcoming_flights_by_pnr[pnr]["flights"].append({
+                "Schedule_id": schedule_id,
+                "passenger_name": passenger_name,
+                "seat_num": seat_num,
+                "Flight_num": flight_num,
+                "src_airport": src_airport,
+                "dst_airport": dst_airport,
+                "dept_date": dept_date,
+                "dept_time": dept_time,
+                "status": status,
+
+            })
+
+    return render_template("upcoming_flights.html", bookings_by_pnr=upcoming_flights_by_pnr, user_info=user_info)
+
+
+@app.route('/feedback/<int:schedule_id>', methods=['GET'])
+@login_required
+def feedback(schedule_id):
+    return render_template('feedback.html', schedule_id=schedule_id)
+
+@app.route('/submit_feedback/<int:schedule_id>', methods=['POST'])
+@login_required
+def submit_feedback(schedule_id):
+    experience = request.form.get('experience')
+    staff = request.form.get('staff')
+    entertainment = request.form.get('entertainment')
+    meals = request.form.get('meals')
+    other_feedback = request.form.get('other_feedback')
+
+    # Store responses in variables
+    feedback_data = {
+        "schedule_id": schedule_id,
+        "experience": experience,
+        "staff": staff,
+        "entertainment": entertainment,
+        "meals": meals,
+        "other_feedback": other_feedback,
+        "submitted_at": datetime.now()
+    }
+
+    flash("Thank you for your feedback!", "success")
+    return redirect(url_for('previous_bookings'))
 
 @app.route('/cancel_booking/<pnr>', methods=['POST'])
 @login_required

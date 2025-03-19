@@ -8,6 +8,24 @@ body {
     max-width: 700px;
 }
 
+/* User Info Card */
+.user-info {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+/* Booking Card */
+.booking-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+    border-left: 5px solid transparent; /* Remove the blue strip */
+}
+
 /* Back to Dashboard Button */
 .back-to-dashboard {
     display: inline-flex;
@@ -37,24 +55,6 @@ body {
     font-size: 16px;
 }
 
-/* User Info Card */
-.user-info {
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-}
-
-/* Booking Card */
-.booking-card {
-    background-color: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-top: 20px;
-    border-left: 5px solid transparent; /* Removed blue strip */
-}
-
 /* PNR Header */
 .card-header {
     display: flex;
@@ -64,7 +64,7 @@ body {
     font-weight: bold;
 }
 
-/* Status Labels */
+/* Cancelled Badge */
 .status-label {
     font-weight: bold;
     padding: 6px 12px;
@@ -78,11 +78,9 @@ body {
     text-transform: uppercase;
 }
 
-.cannot-cancel {
-    background-color: #ffcc00;
-    color: black;
-    font-size: 14px;
-    text-transform: uppercase;
+/* Cancel Button */
+.cancel-button {
+    font-weight: bold;
 }
 
 /* Flight Details */
@@ -138,16 +136,4 @@ body {
 .cancelled-status {
     color: #e63946;
     font-weight: bold;
-}
-
-/* No Bookings Message */
-.no-bookings {
-    text-align: center;
-    font-size: 16px;
-    color: #666;
-    margin-top: 20px;
-}
-.feedback-btn.disabled {
-    pointer-events: none;
-    opacity: 0.5;
 }

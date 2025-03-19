@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bookings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='bookings.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Customer Information</h2>
+        <div class="user-info">
+            <p><strong>Name:</strong> {{ user_info.first_name }} {{ user_info.last_name }}</p>
+            <p><strong>Email:</strong> {{ user_info.email }}</p>
+            <!-- <p><strong>SSN:</strong> {{ user_info.ssn }}</p> -->
+        </div>
+        
+        <div class="buttons">
+            <button onclick="window.location.href='/previous_bookings'">See Previous Bookings</button>
+            <button onclick="window.location.href='/upcoming_flights'">Upcoming Flights</button>
+        </div>
+    </div>
+</body>
+</html>
