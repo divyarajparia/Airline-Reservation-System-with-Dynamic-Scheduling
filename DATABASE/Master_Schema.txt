@@ -60,7 +60,7 @@ CREATE TABLE Traveler_info (
 );
 
 CREATE TABLE Trip (
-    social_security_num CHAR(20),
+    SSN CHAR(20),
     PNR VARCHAR(20),
     Schedule_id INT,
     booked_by INT,

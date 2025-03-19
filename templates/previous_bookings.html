@@ -26,55 +26,57 @@
 
         <!-- Display Previous Bookings -->
         {% if bookings_by_pnr %}
-        {% for pnr, flights in bookings_by_pnr.items() %}
-        <div class="booking">
+    {% for pnr, flights in bookings_by_pnr.items() %}
+        <div class="booking-card">
             <div class="card-header">
-                PNR: {{ pnr }}
+                <h2>PNR: {{ pnr }}</h2>
                 {% if flights[0].status == 'cancelled' %}
-                    <span class="status-label cancelled">Cancelled</span>
+                    <span class="status-label cancelled">CANCELLED</span>
                 {% elif flights[0].can_cancel %}
                     <form action="{{ url_for('cancel_booking', pnr=pnr) }}" method="POST" class="cancel-form">
-                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to cancel this booking?')">CANCEL BOOKING</button>
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this entire booking?')">CANCEL BOOKING</button>
                     </form>
                 {% else %}
-                    <span class="status-label cannot-cancel">Cannot Cancel</span>
+                    <span class="status-label cannot-cancel">CANNOT CANCEL</span>
                 {% endif %}
             </div>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Schedule ID</th>
-                            <th>Seat Number</th>
-                            <th>Flight Number</th>
-                            <th>Source Airport</th>
-                            <th>Destination Airport</th>
-                            <th>Departure Date</th>
-                            <th>Departure Time</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for flight in flights %}
-                            <tr>
-                                <td>{{ flight.Schedule_id }}</td>
-                                <td>{{ flight.seat_num }}</td>
-                                <td>{{ flight.Flight_num }}</td>
-                                <td>{{ flight.src_airport }}</td>
-                                <td>{{ flight.dst_airport }}</td>
-                                <td>{{ flight.dept_date }}</td>
-                                <td>{{ flight.dept_time }}</td>
-                                <td>{{ flight.status }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+            {% for schedule_id, schedule_flights in flights|groupby('Schedule_id') %}
+    <div class="flight-card">
+        <div class="flight-header">
+            <span class="flight-number">Flight: {{ schedule_flights[0].Flight_num }}</span>
+            <span class="flight-details">
+                {{ schedule_flights[0].src_airport }} to {{ schedule_flights[0].dst_airport }} |
+                Departure: {{ schedule_flights[0].dept_date }} {{ schedule_flights[0].dept_time }}
+            </span>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Passenger Name</th>
+                    <th>Seat Number</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for flight in schedule_flights %}
+                    <tr>
+                        <td>{{ flight.passenger_name }}</td>
+                        <td>{{ flight.seat_num }}</td>
+                        <td>{{ flight.status }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endfor %}
+
         </div>
     {% endfor %}
 {% else %}
     <p class="no-bookings">No previous bookings found.</p>
 {% endif %}
+
+
 
 
 
