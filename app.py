@@ -1,4 +1,5 @@
 import string
+from collections import defaultdict
 from flask import Flask, render_template, url_for, redirect, request, session
 from flask_sqlalchemy import SQLAlchemy 
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
@@ -491,8 +492,12 @@ def dashboard():
             sched_query = text("""SELECT Schedule_id, Flight_num, src_airport, dst_airport, dept_time, arrival_time, base_price FROM Schedule WHERE Schedule_id = :sched_id""")
             flight_query = text("""SELECT aircraft_type, airline_name FROM Flight_data WHERE Flight_num = :f_id""")
             airport_query = text("""SELECT airport_name FROM Airports WHERE IATA_code = :IATA""")
+
+            r = 1
             for route_id, schedules in flight_routes.items():
                 route_info = []
+                airport_cnt = defaultdict(int)
+                s_num = 0
                 for sched_id in schedules:
                     res = db.session.execute(sched_query, {'sched_id': sched_id})
                     res = res.fetchall()[0]
@@ -508,8 +513,20 @@ def dashboard():
                     temp = [schedule_id, flight_num, aircraft_type, airline_name ,src_airport, dst_airport, dept_time, arrival_time, base_price, src_name, dst_name]
                     route_info.append(temp)
 
-                route_id = int(route_id)    
-                flight_route_info[route_id] = route_info
+                    if s_num == 0:
+                        airport_cnt[src_name] += 1
+                        airport_cnt[dst_name] += 1
+                    else:
+                        airport_cnt[dst_name] += 1
+
+                    s_num += 1
+
+                for airport, count in airport_cnt.items():
+                    if count >= 2:
+                        break
+                else:
+                    flight_route_info[r] = route_info
+                    r += 1
 
             session['flight_route_info'] = flight_route_info
             print(flight_route_info)
