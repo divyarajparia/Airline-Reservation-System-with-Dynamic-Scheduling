@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  flask_app:
+    build: .
+    container_name: flight_booking
+    ports:
+      - "8000:8000"  # Map local port 8000 to container port 8000
+    env_file:
+      - .env
+    volumes:
+      - .:/app  # Mount the current directory to the container
+    restart: always  # Ensures the container restarts if it crashes
