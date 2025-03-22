@@ -1,27 +1,11 @@
+
 services:
   flask_app:
     build: .
     ports:
-      - "8000"
+      - "8000:8000"
     env_file:
       - .env
     volumes:
-      - .:/app
-    restart: always
-    deploy:
-      replicas: 3  # Create 3 instances for load balancing
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
-
-  nginx:
-    image: nginx:latest
-    container_name: nginx_lb
-    ports:
-      - "8000:8000"  # Listen on port 8000
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    depends_on:
-      - flask_app
+      - .:/app  # Mounts the local project directory inside the container
     restart: always
