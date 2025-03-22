@@ -2,3 +2,5 @@ DELETE From Traveler_info;
 DELETE From Trip;
 DELETE From Bookings;
 DELETE FROM Transactions;
+UPDATE Schedule SET seats = 12;
+UPDATE Seats SET status = "available";
