@@ -429,6 +429,50 @@ def cancel_booking(pnr):
     
     return redirect(url_for('previous_bookings'))
 
+@app.route('/check_schedule', methods=['GET','POST'])
+@login_required
+def check_schedule():
+    airport_sched = []
+    if request.method == 'POST':
+        sched_date = request.form.get('sched_date')
+        iata_code = request.form.get('iata_code')
+        sched_query_dept = text("""SELECT  Flight_num,  src_airport, dst_airport, dept_time, status FROM Schedule 
+                           WHERE src_airport = :iata_code AND dept_date = :sched_date""")
+        res_dept = db.session.execute(sched_query_dept, {'iata_code': iata_code, 'sched_date': sched_date})
+        res_dept = res_dept.fetchall()
+        print(res_dept)
+
+        for t in res_dept:
+            t = list(t)
+            t[3] = str(t[3])
+            t.append("Departure")
+            airport_sched.append(t)
+
+        sched_query_arrv = text("""SELECT  Flight_num,  src_airport, dst_airport, arrival_time, status FROM Schedule 
+                           WHERE dst_airport = :iata_code AND dept_date = :sched_date""")
+        res_arrv = db.session.execute(sched_query_arrv, {'iata_code': iata_code, 'sched_date': sched_date})
+        res_arrv = res_arrv.fetchall()
+
+        for t in res_arrv:
+            t = list(t)
+            t[3] = str(t[3])
+            t.append("Arrival")
+            airport_sched.append(t)
+        print(airport_sched)
+
+        airport_sched.sort(key=lambda x: x[3])
+        
+        # print(airport_sched)
+
+    
+
+    aiport_query = text("SELECT IATA_code FROM Airports")
+    results = db.session.execute(aiport_query).fetchall()
+    iata_codes = [row[0] for row in results]
+    return render_template('check_schedule.html', iata_codes=iata_codes, airport_schedule=airport_sched)
+
+
+
 
 def dynamic_pricing(base_price, travel_date):
     current_date = datetime.now().date()

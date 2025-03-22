@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='check_schedule_styles.css') }}">
+</head>
+
+<body>
+    <header>
+        <div class="logo">Schedule</div>
+        <div class="nav-buttons">
+            <button onclick="window.location.href='{{ url_for('dashboard') }}'">Dashboard</button>
+        </div>
+    </header>
+
+    <!-- Form Container -->
+    <div class="input-container">
+        <form action="{{ url_for('check_schedule') }}" method="POST">
+            <!-- Form Row Wrapper for Flexbox -->
+            <div class="form-row">
+                <!-- Date Input -->
+                <div class="form-group">
+                    <label for="sched_date">Select Date:</label>
+                    <input type="date" id="sched_date" name="sched_date" required>
+                </div>
+
+                <!-- IATA Code Selection -->
+                <div class="form-group">
+                    <label for="iata_code">Select IATA Code:</label>
+                    <select id="iata_code" name="iata_code" required>
+                        <option value="" disabled selected>Select an airport</option>
+                        {% for code in iata_codes %}
+                        <option value="{{ code }}">{{ code }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="btn-group">
+                    <button type="submit">Check Schedule</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% if airport_schedule %}
+    <div class="table-container">
+        <h2>Flight Schedule Results</h2>
+        <table class="schedule-table">
+            <thead>
+                <tr>
+                    <th>Flight Number</th>
+                    <th>Source Airport</th>
+                    <th>Destination Airport</th>
+                    <th>Time</th>
+                    <th>Status</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for flight in airport_schedule %}
+                <tr>
+                    <td>{{ flight[0] }}</td>
+                    <td>{{ flight[1] }}</td>
+                    <td>{{ flight[2] }}</td>
+                    <td>{{ flight[3] }}</td>
+                    <td>{{ flight[4] }}</td>
+                    <td>{{ flight[5] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</body>
+
+</html>
