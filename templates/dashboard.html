@@ -74,9 +74,33 @@
                 <div class="flight-info">
                     {% set total = namespace(price=0) %}
                     {% for flight in route %}
+                    <!-- {% if flight[11] is not none %}
                     <div class="flight-segment">
-                        <p><strong>{{ flight[3] }}</strong> {{ flight[1] }} ({{ flight[2] }})            {{ flight[4] }} ({{ flight[6] }}) → {{ flight[5] }} ({{ flight[7] }})</p>
+                        <p><strong>{{ flight[3] }}</strong> {{ flight[1] }} ({{ flight[2] }})            {{ flight[4] }} ({{ flight[6] }}) → {{ flight[5] }} ({{ flight[7] }})             Rating: {{ flight[11]}}/5</p>
                     </div>
+                    {% else %}
+                    <div class="flight-segment">
+                        <p><strong>{{ flight[3] }}</strong> {{ flight[1] }} ({{ flight[2] }})            {{ flight[4] }} ({{ flight[6] }}) → {{ flight[5] }} ({{ flight[7] }})             No Ratings</p>
+                    </div>
+                    {% endif %} -->
+                    {% if flight[11] is not none %}
+                    <div class="flight-segment">
+                        <p>
+                            <strong>{{ flight[3] }}</strong> {{ flight[1] }} ({{ flight[2] }})
+                            {{ flight[4] }} ({{ flight[6] }}) → {{ flight[5] }} ({{ flight[7] }})
+                            <span class="rating">Rating: {{ flight[11] }}/5</span>
+                        </p>
+                    </div>
+                    {% else %}
+                    <div class="flight-segment">
+                        <p>
+                            <strong>{{ flight[3] }}</strong> {{ flight[1] }} ({{ flight[2] }})
+                            {{ flight[4] }} ({{ flight[6] }}) → {{ flight[5] }} ({{ flight[7] }})
+                            <span class="no-rating">No Ratings</span>
+                        </p>
+                    </div>
+                    {% endif %}
+
                     {% set total.price = total.price + flight[8] %}
                     {% endfor %}
                     <p class="total-price"><strong>Total Price:</strong> ${{ total.price }}</p>

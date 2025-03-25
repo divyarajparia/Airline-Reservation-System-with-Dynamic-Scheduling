@@ -95,7 +95,7 @@ CREATE TABLE Bookings (
     FOREIGN KEY (transaction_id) REFERENCES Transaction_Log(Transaction_id) ON DELETE CASCADE
 );
 
-CREATE TABLE flight_feedback (
+CREATE TABLE Feedback (
     user_id INT NOT NULL,
     schedule_id INT NOT NULL,
     experience INT,

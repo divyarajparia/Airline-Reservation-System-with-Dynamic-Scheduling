@@ -1,0 +1,11 @@
+CREATE PROCEDURE CalculateAverageFeedbackByFlight(IN p_flight_num VARCHAR(10))
+BEGIN
+    DECLARE v_avg_rating DECIMAL(10, 2);
+
+    SELECT AVG((experience + staff + meals + entertainment) / 4) INTO v_avg_rating
+    FROM flight_feedback f
+    JOIN Schedule s ON f.schedule_id = s.Schedule_id
+    WHERE s.Flight_num = p_flight_num;
+
+    SELECT v_avg_rating AS avg_rating;
+END

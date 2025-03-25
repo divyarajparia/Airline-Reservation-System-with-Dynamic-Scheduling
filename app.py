@@ -294,20 +294,20 @@ def feedback(schedule_id):
 @app.route('/submit_feedback/<int:schedule_id>', methods=['POST'])
 @login_required
 def submit_feedback(schedule_id):
-    experience = request.form.get('experience')
-    staff = request.form.get('staff')
-    entertainment = request.form.get('entertainment')
-    meals = request.form.get('meals')
+    experience = request.form.get('experience') or 0
+    staff = request.form.get('staff') or 0
+    entertainment = request.form.get('entertainment') or 0
+    meals = request.form.get('meals') or 0
     other_feedback = request.form.get('other_feedback')
 
     # Store responses in variables
     feedback_data = {
         "user_id": current_user.user_id,
         "schedule_id": schedule_id,
-        "experience": experience,
-        "staff": staff,
-        "entertainment": entertainment,
-        "meals": meals,
+        "experience": int(experience),
+        "staff": int(staff),
+        "entertainment": int(entertainment),
+        "meals": int(meals),
         "other_feedback": other_feedback,
         "submitted_at": datetime.now()
     }
@@ -339,6 +339,10 @@ def cancel_booking(pnr):
         # flash(f"Cancellation failed: {str(e)}", "danger")
     
     return redirect(url_for('previous_bookings'))
+
+def get_average_feedback(flight_num):
+    result = db.session.execute(text("CALL CalculateAverageFeedback(:flight_num)"), {'flight_num': flight_num})
+    return result.scalar()
 
 @app.route('/check_schedule', methods=['GET','POST'])
 @login_required
@@ -400,6 +404,7 @@ def dynamic_pricing(base_price, travel_date):
         price = base_price * 1.2
 
     return price
+
 
 
 @app.route('/dashboard', methods=['GET','POST'])
@@ -465,7 +470,9 @@ def dashboard():
                     src_name = db.session.execute(airport_query, {'IATA': src_airport}).fetchall()[0][0]
                     dst_name = db.session.execute(airport_query, {'IATA': dst_airport}).fetchall()[0][0]
 
-                    temp = [schedule_id, flight_num, aircraft_type, airline_name ,src_airport, dst_airport, dept_time, arrival_time, base_price, src_name, dst_name]
+                    avg_rating = get_average_feedback(flight_num)
+
+                    temp = [schedule_id, flight_num, aircraft_type, airline_name ,src_airport, dst_airport, dept_time, arrival_time, base_price, src_name, dst_name, avg_rating]
                     route_info.append(temp)
 
                     if s_num == 0:
