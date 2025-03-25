@@ -94,3 +94,17 @@ CREATE TABLE Bookings (
     FOREIGN KEY (user_id) REFERENCES User_info(user_id) ON DELETE CASCADE,
     FOREIGN KEY (transaction_id) REFERENCES Transaction_Log(Transaction_id) ON DELETE CASCADE
 );
+
+CREATE TABLE flight_feedback (
+    user_id INT NOT NULL,
+    schedule_id INT NOT NULL,
+    experience INT,
+    staff INT,
+    entertainment INT,
+    meals INT,
+    other_feedback TEXT,
+    submitted_at DATETIME NOT NULL,
+    PRIMARY KEY (user_id, schedule_id),
+    FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (schedule_id) REFERENCES Schedule(schedule_id) ON DELETE CASCADE
+);

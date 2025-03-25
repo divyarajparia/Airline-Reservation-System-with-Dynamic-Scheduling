@@ -85,6 +85,13 @@ body {
     text-transform: uppercase;
 }
 
+.feedback-submitted {
+    background-color: #0a98f8;
+    color: black;
+    font-size: 14px;
+    text-transform: capitalize;   
+}
+
 /* Flight Details */
 .flight-card {
     background-color: #fdfdfd;

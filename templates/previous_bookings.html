@@ -57,10 +57,14 @@
                                         <td>{{ flight.seat_num }}</td>
                                         <td>{{ flight.status }}</td>
                                         <td>
-                                            <a href="{{ url_for('feedback', schedule_id=flight.Schedule_id) }}"
-                                            class="btn btn-primary feedback-btn {% if not flight.can_give_feedback %}disabled{% endif %}">
-                                                Submit Feedback
-                                            </a>
+                                            {% if flight.feedback_exists %}
+                                            <span class="status-label feedback-submitted">Feedback Submitted</span>
+                                            {% else %}
+                                                <a href="{{ url_for('feedback', schedule_id=flight.Schedule_id) }}"
+                                                class="btn btn-primary feedback-btn {% if not flight.can_give_feedback %}disabled{% endif %}">
+                                                    Submit Feedback
+                                                </a>
+                                            {% endif %}
                                         </td>
                                     </tr>
                                 </tbody>
